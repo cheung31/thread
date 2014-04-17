@@ -1,5 +1,14 @@
 # Thread
 
+A Thread of Content consists of a root Content and its direct descendent Content.
+
+```
+Root Content
+|_ 1st Child content
+|_ …
+|_ Nth Child content
+```
+
 ## States
 * ```initial``` - 
 The thread has a root Content.
