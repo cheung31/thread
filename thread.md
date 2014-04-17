@@ -9,6 +9,18 @@ Root Content
 |_ Nth Child content
 ```
 
+A nested Thread can be achieved by adding another Thread as a child.
+
+```
+Root Content (1st-level Thread)
+|
+Root Content (1st-level Thread)
+|_ Root Content (2nd-level Thread)
+   |_ 1st Child content
+   |_ …
+   |_ Nth Child content
+```
+
 ## States
 * ```initial``` - 
 The thread has a root Content.
