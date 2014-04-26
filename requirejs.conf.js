@@ -41,6 +41,26 @@ require.config({
     name: "view",
     location: "lib/view/src",
     main: "view"
+  },{
+    name: 'streamhub-editor',
+    location: 'lib/streamhub-editor/src/javascript'
+  },{
+    name: 'annotations',
+    location: 'lib/annotations/src/javascript'
+  },{
+    name: 'annotations/events',
+    location: 'lib/annotations/src/javascript/events',
+    main: 'events'
+  },{
+    name: 'annotations/adapters',
+    location: 'lib/annotations/src/javascript/adapters',
+    main: 'adapters'
+  },{
+    name: 'templates',
+    location: 'src/templates'
+  },{
+    name: 'livefyre-bootstrap',
+    location: 'lib/livefyre-bootstrap/src'
   }],
   shim: {
     jquery: {

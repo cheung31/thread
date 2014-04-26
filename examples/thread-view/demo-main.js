@@ -1,6 +1,7 @@
 var Collection = require('streamhub-sdk/collection');
 var LivefyreContent = require('streamhub-sdk/content/types/livefyre-content');
-var ThreadViewFactory = require('thread/thread-view-factory');
+//var Thread = require('thread');
+var ThreadView = require('thread/ui/thread/view');
 
 /**
  * Insantiate a single ContentView
@@ -21,7 +22,7 @@ content.author = {
 content.id = 'a';
 
 var reply = new LivefyreContent();
-reply.body = 'You speak the truth.';
+reply.body = 'Reply 1';
 reply.author = {
     displayName: 'gobengo',
     avatar: 'http://www.gravatar.com/avatar/710b26b2330f4a1b310c244ae917bf0b.png'
@@ -30,32 +31,42 @@ reply.id = 'b';
 reply.parentId = content.id;
 content.addReply(reply);
 
-var threadViewFactory = new ThreadViewFactory({
-    maxNestLevel: 2,
-    initialReplyVisibility: true
-});
+var reply = new LivefyreContent();
+reply.body = 'Reply 2';
+reply.author = {
+    displayName: 'gobengo',
+    avatar: 'http://www.gravatar.com/avatar/710b26b2330f4a1b310c244ae917bf0b.png'
+};
+reply.id = 'c';
+reply.parentId = content.id;
+content.addReply(reply);
 
-var threadView = threadViewFactory.createThreadView(content);
-threadView.setElement(document.getElementById('thread-view'));
 
+// Create ThreadView
+function createThreadView () {
+    return new ThreadView({
+        el: document.getElementById('thread-view'),
+        content: content
+        //assetServer: this._config.assetServer,
+        //blockId: this._getActiveBlock().id,
+        //defaultAvatar: this._config.defaultAvatar,
+        //isCustomNetwork: this._collection.isCustomNetwork()
+    });
+};
+var threadView = window.threadView = createThreadView();
 threadView.render();
 
-// Stream in a reply
-var replyCount = 5;
+// Stream a reply
+var count = 5;
 setInterval(function () {
-    if (! replyCount) {
+    if (!count) {
         return;
     }
-
     var reply = new LivefyreContent();
-    reply.body = 'Reply ' + replyCount;
-    reply.author = {
-        displayName: 'gobengo',
-        avatar: 'http://www.gravatar.com/avatar/710b26b2330f4a1b310c244ae917bf0b.png'
-    };
-    reply.id = replyCount;
+    reply.body = count;
+    reply.id = count;
     reply.parentId = content.id;
-debugger;
-    content.addReply(reply);
-    replyCount--;
+    content.addReply(reply)
+    count--;
 }, 1000);
+
