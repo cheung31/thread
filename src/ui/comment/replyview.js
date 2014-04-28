@@ -17,6 +17,7 @@ var inherits = require('inherits');
 var ReplyView = function(opts) {
     View.call(this, opts);
     this._contentView = opts.contentView;
+
 };
 inherits(ReplyView, View);
 
@@ -35,6 +36,7 @@ ReplyView.prototype.getModel = function () {
 /** @override */
 ReplyView.prototype.render = function() {
     View.prototype.render.call(this);
+
     this._contentView.setElement(this.$('.' + ReplyView.CLASSES.ROOT_CONTAINER));
     this._contentView.render();
 

@@ -15,6 +15,7 @@ var View = require('view');
 var viewEnum = require('annotations/enums').navigableViews;
 var WriteEvents = require('annotations/events').write;
 var gradientTemplate = require('hgn!templates/thread/thread/gradient');
+var ContentView = require('streamhub-sdk/content/views/content-view');
 
 var log = debug('annotations/thread/ui/thread/view');
 
@@ -41,14 +42,12 @@ var ThreadView = function(opts) {
      */
     this._streamView = this.createStreamView({
         assetServer: opts.assetServer,
-        defaultAvatar: opts.defaultAvatar,
-        content: opts.content
+        defaultAvatar: opts.defaultAvatar
     });
 
     //QueueDecorator.decorate(this._streamView);
 
     this._content = opts.content;
-
     if (this._content) {
         this._content.on('reply', function (content) {
             // Comments should only be prepended if they're from the current user
@@ -58,7 +57,7 @@ var ThreadView = function(opts) {
             this._streamView.addComment(content, prepend);
         }.bind(this));
         var comments = [this._content].concat(this._content.replies); 
-        this._streamView.initialize(comments);
+        this._streamView.initialize(comments, this._content.id);
     }
 };
 inherits(ThreadView, View);

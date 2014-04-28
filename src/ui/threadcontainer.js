@@ -11,7 +11,6 @@ var SortingUtil = require('annotations/util/sorting');
 var template = require('hgn!templates/thread/threadcontainer');
 var ThreadEvents = require('annotations/events').thread;
 var TopCommentView = require('thread/ui/comment/topview');
-var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
 
 var log = debug('annotations/thread/ui/threadcontainer');
 
@@ -84,19 +83,26 @@ ThreadContainer.prototype.comparator = SortingUtil.helpfulnessComparator;
  * Initialize the thread container with a set of comments. These should all be
  * rendered prior to adding to the DOM so there is only 1 DOM write.
  * @param {Array.<Comment>} comments The set of comments to load.
+ * @param {String} opt_parentId The comment id of the parent comment
  */
-ThreadContainer.prototype.initialize = function(comments) {
+ThreadContainer.prototype.initialize = function(comments, opt_parentId) {
     var el = $(template());
     var commentMap = {};
     var parent, parentId;
 
+    this._rootParentId = opt_parentId;
+
     $.each(comments, function(i, comment) {
-        parentId = comment.parentId || 'root';
+        if (! comment.parentId || comment.id === this._rootParentId) {
+            parentId = 'root';
+        } else {
+            parentId = comment.parentId;
+        }
         if (!commentMap[parentId]) {
             commentMap[parentId] = [];
         }
         commentMap[parentId].push(comment);
-    });
+    }.bind(this));
 
     BaseThreadContainer.prototype.initialize.call(this, commentMap['root'], el);
 
@@ -108,11 +114,14 @@ ThreadContainer.prototype.initialize = function(comments) {
             parent && parent.initialize(commentMap[parentId]);
         }
     }
+
+    this._commentMap = commentMap;
 };
 
 /** @override */
 ThreadContainer.prototype.processComment = function(prepend, el, i, comment) {
-    if (!comment.parentId) {
+console.log(comment.id);
+    if (! comment.parentId || comment.id === this._rootParentId) {
         BaseThreadContainer.prototype.processComment.call(this, prepend, el, i, comment);
         return;
     }

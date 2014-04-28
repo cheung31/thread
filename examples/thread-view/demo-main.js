@@ -21,26 +21,35 @@ content.author = {
 };
 content.id = 'a';
 
-var reply = new LivefyreContent();
-reply.body = 'Reply 1';
-reply.author = {
+var reply1 = new LivefyreContent();
+reply1.body = 'Reply 1';
+reply1.author = {
     displayName: 'gobengo',
     avatar: 'http://www.gravatar.com/avatar/710b26b2330f4a1b310c244ae917bf0b.png'
 };
-reply.id = 'b';
-reply.parentId = content.id;
-content.addReply(reply);
+reply1.id = 'b';
+reply1.parentId = content.id;
+content.addReply(reply1);
 
-var reply = new LivefyreContent();
-reply.body = 'Reply 2';
-reply.author = {
+var reply2 = new LivefyreContent();
+reply2.body = 'Reply 2';
+reply2.author = {
     displayName: 'gobengo',
     avatar: 'http://www.gravatar.com/avatar/710b26b2330f4a1b310c244ae917bf0b.png'
 };
-reply.id = 'c';
-reply.parentId = content.id;
-content.addReply(reply);
+reply2.id = 'c';
+reply2.parentId = content.id;
+content.addReply(reply2);
 
+var reply3 = new LivefyreContent();
+reply3.body = 'Reply 3';
+reply3.author = {
+    displayName: 'gobengo',
+    avatar: 'http://www.gravatar.com/avatar/710b26b2330f4a1b310c244ae917bf0b.png'
+};
+reply3.id = 'd';
+reply3.parentId = reply2.id;
+reply2.addReply(reply3);
 
 // Create ThreadView
 function createThreadView () {
@@ -56,7 +65,7 @@ function createThreadView () {
 var threadView = window.threadView = createThreadView();
 threadView.render();
 
-// Stream a reply
+// Stream some replies
 var count = 5;
 setInterval(function () {
     if (!count) {
@@ -65,8 +74,8 @@ setInterval(function () {
     var reply = new LivefyreContent();
     reply.body = count;
     reply.id = count;
-    reply.parentId = content.id;
-    content.addReply(reply)
+    reply.parentId = reply3.id;
+    reply3.addReply(reply)
     count--;
 }, 1000);
 

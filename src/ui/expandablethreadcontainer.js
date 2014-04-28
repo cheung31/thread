@@ -185,14 +185,20 @@ ExpandableThreadContainer.prototype.initialize = function(comments) {
     var containerEl = this.getContainerElement();
     var len = comments.length;
     var view;
+    var commentView;
     var visCount = 0;
 
     $.each(comments.reverse(), $.proxy(function(i, comment) {
         if (!!this._comments[comment.id]) {
             return;
         }
-        view = new this._commentConstructor(this._getCommentOptions(comment));
-        this._comments[comment.id] = view;
+        commentView = new this._commentConstructor(this._getCommentOptions(comment));
+        this._comments[comment.id] = commentView;
+
+        var ThreadView = require('thread/ui/thread/view');
+        view = new ThreadView({
+            content: comment
+        });
 
         // Prepending the id since the list was reversed to make it easier to
         // process in this function.

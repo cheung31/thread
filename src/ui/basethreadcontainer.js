@@ -26,7 +26,7 @@ var BaseThreadContainer = function(opts) {
      */
     this._commentConstructor = this.opts.commentConstructor;
 
-    this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory()
+    this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
 
     /**
      * Sorted set of all comment ids.
@@ -71,7 +71,9 @@ BaseThreadContainer.prototype.addComment = function(comments, opt_prepend, opt_e
     if (!$.isArray(comments)) {
         comments = [comments];
     }
-    $.each(comments, $.proxy(this.processComment, this, !!opt_prepend, $(el)));
+    for (var i=0; i < comments.length; i++) {
+        this.processComment(!!opt_prepend, $(el), i, comments[i]);
+    }
 };
 
 /** @override */
