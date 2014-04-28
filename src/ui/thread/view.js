@@ -55,6 +55,10 @@ var ThreadView = function(opts) {
             //prepend = content.isUserAuthor() && !comment.parentId;
             var prepend = !content.parentId;
             this._streamView.addComment(content, prepend);
+            var comments = [this._content]
+                .concat(this._content.replies)
+                .concat(content.replies); 
+            this._streamView.reinitialize(comments);
         }.bind(this));
         var comments = [this._content].concat(this._content.replies); 
         this._streamView.initialize(comments, this._content.id);

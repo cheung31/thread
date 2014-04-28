@@ -111,12 +111,10 @@ BaseThreadContainer.prototype.processComment = function(prepend, el, i, comment)
     if (!!this._comments[comment.id]) {
         return;
     }
+    //TODO(ryanc): TopCommentView?
     var view = new this._commentConstructor(this._getCommentOptions(comment));
     //view.renderComment();
     view.render();
-    //TODO(ryanc): TopCommentView?
-    //var view = new this._commentConstructor({ content: comment });
-    //view.render();
     this._comments[comment.id] = view;
 
     if (prepend) {
@@ -148,7 +146,7 @@ BaseThreadContainer.prototype.reinitialize = function(opt_comments) {
     var commentView;
     for (var i=0, len=this._commentIds.length; i < len; i++) {
         commentView = this._comments[this._commentIds[i]];
-        comment = commentView.getModel();
+        comment = commentView._contentView.content;
         comments.push(comment);
         commentView.destroy();
     }
@@ -157,7 +155,7 @@ BaseThreadContainer.prototype.reinitialize = function(opt_comments) {
 
     comments.push.apply(comments, opt_comments);
     this.getContainerElement().empty();
-    this.initialize(comments);
+    this.initialize(comments, comments[0].id);
 };
 
 module.exports = BaseThreadContainer;

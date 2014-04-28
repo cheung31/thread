@@ -120,7 +120,6 @@ ThreadContainer.prototype.initialize = function(comments, opt_parentId) {
 
 /** @override */
 ThreadContainer.prototype.processComment = function(prepend, el, i, comment) {
-console.log(comment.id);
     if (! comment.parentId || comment.id === this._rootParentId) {
         BaseThreadContainer.prototype.processComment.call(this, prepend, el, i, comment);
         return;
