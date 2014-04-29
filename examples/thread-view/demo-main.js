@@ -51,6 +51,16 @@ reply3.id = 'd';
 reply3.parentId = reply2.id;
 reply2.addReply(reply3);
 
+var reply4 = new LivefyreContent();
+reply4.body = 'Reply 4';
+reply4.author = {
+    displayName: 'gobengo',
+    avatar: 'http://www.gravatar.com/avatar/710b26b2330f4a1b310c244ae917bf0b.png'
+};
+reply4.id = '3';
+reply4.parentId = content.id;
+content.addReply(reply4);
+
 // Create ThreadView
 function createThreadView () {
     return new ThreadView({
