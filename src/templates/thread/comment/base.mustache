@@ -1,0 +1,8 @@
+<img class="lf-comment-author-avatar" src="{{ author.avatar }}" onerror="javascript:this.src='{{ defaultAvatar }}';" />
+<header class="lf-comment-header">
+    <span class="lf-comment-author-name">{{{ author.displayName }}}</span>
+    {{> tags}}
+</header>
+<section class="lf-comment-body">
+    {{{ body }}}
+</section>

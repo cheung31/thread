@@ -1,0 +1,8 @@
+<li data-value="{{ key }}" class="lf-{{ key }} {{ cls }}">
+    <span>{{ str }}</span>
+    {{#showTimeRemaining}}
+        <span class="lf-edit-timer">
+            <span class="fycon-clock lf-edit-countdown">{{ timeRemaining }}</span>
+        </span>
+    {{/showTimeRemaining}}
+</li>

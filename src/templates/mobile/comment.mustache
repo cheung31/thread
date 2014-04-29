@@ -1,0 +1,23 @@
+<div class="lf-comment-container">
+    <img class="lf-comment-author-avatar" src="{{ author.avatar }}" />
+    <header class="lf-comment-header">
+        <div class="lf-comment-header-upper">
+            <span class="lf-comment-author-name">{{{ author.displayName }}}</span>
+            {{> tags}}
+            <div class="lf-escape-button fycon-x"></div>
+        </div>
+        <div class="lf-comment-header-lower">
+            <div class="lf-vote-count">{{ voteCount }} {{ strings.voteCount }}</div>
+        </div>
+    </header>
+    <section class="lf-comment-body">
+        {{{ body }}}
+    </section>
+    {{> footer }}
+</div>
+{{#hasReplies}}
+<footer class='lf-comment-container-footer'>
+    <span class="lf-reply-count">{{ strings.replyLink }}</span>
+</footer>
+{{/hasReplies}}
+<div class="lf-reply-container"></div>

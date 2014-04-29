@@ -1,0 +1,36 @@
+{
+  "name": "thread",
+  "description": "Livefyre Thread",
+  "author": "Livefyre <support@livefyre.com>",
+  "contributors": {
+    "name": "Ryan Cheung",
+    "email": "ryanc@livefyre.com"
+  },
+  "version": "0.0.0",
+  "dependencies": {
+    "bower": "~1.2",
+    "requirejs": "2.1.9"
+  },
+  "scripts": {
+    "postinstall": "./node_modules/bower/bin/bower install",
+    "start": "./node_modules/http-server/bin/http-server .",
+    "build": "./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js && npm run-script build-css",
+    "build-css": "mkdir -p dist && cp src/css/style.css dist/streamhub-sdk.min.css",
+    "hint": "./node_modules/jshint/bin/jshint src/ tests/spec; echo",
+    "hint-jenkins": "./node_modules/jshint/bin/jshint --reporter=jslint src/**/*.js > lint.log; echo",
+    "test": "./node_modules/karma/bin/karma start tools/karma.conf.js --singleRun",
+    "testw": "./node_modules/karma/bin/karma start tools/karma.conf.js",
+    "test-ci": "./node_modules/karma/bin/karma start tools/karma.conf.js --singleRun --reporters dots,junit,coverage  && npm run send-to-coveralls",
+    "test-jenkins": "npm test",
+    "karma": "./node_modules/karma/bin/karma start tools/karma.conf.js",
+    "build-version": "node tools/build_version.js",
+    "lessc": "./node_modules/less/bin/lessc -ru --compress src/css/thread.{less,css}",
+    "jsdoc": "rm -rf docs/api && ./node_modules/jsdoc/jsdoc README.md -c tools/jsdoc.conf.json"
+  },
+  "devDependencies": {
+    "http-server": "*",
+    "less": "1.6.2",
+    "jshint": "~2.1.0",
+    "jsdoc": "git://github.com/jsdoc3/jsdoc.git"
+  }
+}

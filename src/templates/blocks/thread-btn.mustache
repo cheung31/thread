@@ -1,0 +1,7 @@
+{{#count}}
+<a class="fycon-action-view" id="{{ id }}">{{ count }}</a>
+{{/count}}
+{{^count}}
+<a class="fycon-action-view" id="{{ id }}">{{#isMedia}}{{ strings.emptyImageBlockTxt }}{{/isMedia}}{{^isMedia}}{{ strings.emptyTextBlockTxt }}{{/isMedia}}
+</a>
+{{/count}}

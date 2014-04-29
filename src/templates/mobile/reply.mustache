@@ -1,0 +1,11 @@
+<div class="lf-comment-container">
+    <img class="lf-comment-author-avatar" src="{{ author.avatar }}" />
+    <header class="lf-comment-header">
+        <span class="lf-comment-author-name">{{{ author.displayName }}}</span>
+        {{> tags}}
+        <a class="lf-etc-btn fycon-action-etc"></a>
+    </header>
+    <section class="lf-comment-body">
+        {{{ body }}}
+    </section>
+</div>

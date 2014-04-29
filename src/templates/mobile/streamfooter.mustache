@@ -1,0 +1,24 @@
+{{#index}}
+    <span>{{ index }} {{ strings.tally }} {{ streamCount }}</span>
+{{/index}}
+{{#loading}}
+    <span>{{ strings.loading }}</span>
+{{/loading}}
+{{#indexOne}}
+    <span class="lf-pull-left">
+        <span class="fycon-arrow-left"></span><span class="fycon-arrow-left"></span>
+        <span class="lf-invite-text">{{strings.write}}</span>
+    </span>
+{{/indexOne}}
+{{#inviteRead}}
+    <span class="lf-pull-right">
+        <span class="lf-invite-text">{{strings.read}}</span>
+        <span class="fycon-arrow-right"></span><span class="fycon-arrow-right"></span>
+    </span>
+{{/inviteRead}}
+{{#inviteWrite}}
+    <span class="lf-pull-right">
+        <span class="lf-invite-text">{{strings.write}}</span>
+        <span class="fycon-arrow-right"></span><span class="fycon-arrow-right"></span>
+    </span>
+{{/inviteWrite}}

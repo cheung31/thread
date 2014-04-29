@@ -1,0 +1,14 @@
+<div class="lf-comment-container">
+    <img class="lf-comment-author-avatar" src="{{ author.avatar }}" />
+    <header class="lf-comment-header">
+        <span class="lf-comment-author-name">{{{ author.displayName }}}</span>
+        {{> tags}}
+        {{#hasVotes}}
+            <div class="lf-vote-count">{{ voteCount }} {{ strings.voteCount }}</div>
+        {{/hasVotes}}
+    </header>
+    <section class="lf-comment-body">
+        {{{ body }}}
+    </section>
+    {{> footer }}
+</div>
