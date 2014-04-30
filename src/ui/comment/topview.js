@@ -234,10 +234,8 @@ TopCommentView.prototype.render = function() {
     }
 
     this._replyContainer = new QueuedExpandableThreadContainer({
-        assetServer: this.opts.assetServer,
-        commentConstructor: ReplyCommentView,
+        contentConstructor: ReplyCommentView,
         commentQueueBtn: btn,
-        defaultAvatar: this.opts.defaultAvatar,
         el: this.$('.'+ CLASSES.REPLY_CONTAINER)
     });
     this._replyContainer.render();

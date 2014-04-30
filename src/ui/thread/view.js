@@ -9,13 +9,12 @@ var inherits = require('inherits');
 var loader = require('livefyre-bootstrap/loader');
 var QueueDecorator = require('annotations/thread/ui/queuedecorator');
 var textEnumeration = require('annotations/i18n/enumeration');
-var ThreadContainer = require('thread/ui/threadcontainer');
+var ThreadContainer = require('thread/ui/thread-container');
 var ThreadEvents = require('annotations/events').thread;
 var View = require('view');
 var viewEnum = require('annotations/enums').navigableViews;
 var WriteEvents = require('annotations/events').write;
 var gradientTemplate = require('hgn!templates/thread/thread/gradient');
-var ContentView = require('streamhub-sdk/content/views/content-view');
 
 var log = debug('annotations/thread/ui/thread/view');
 
@@ -41,8 +40,7 @@ var ThreadView = function(opts) {
      * @private
      */
     this._streamView = this.createStreamView({
-        assetServer: opts.assetServer,
-        defaultAvatar: opts.defaultAvatar
+        content: opts.content
     });
 
     //QueueDecorator.decorate(this._streamView);
@@ -54,14 +52,10 @@ var ThreadView = function(opts) {
             // and if they are top level comments.
             //prepend = content.isUserAuthor() && !comment.parentId;
             var prepend = !content.parentId;
-            this._streamView.addComment(content, prepend);
-            var comments = [this._content]
-                .concat(this._content.replies)
-                .concat(content.replies); 
-            this._streamView.reinitialize(comments);
+            this._streamView.add(content);
         }.bind(this));
-        var comments = [this._content].concat(this._content.replies); 
-        this._streamView.initialize(comments, this._content.id);
+        //var comments = [this._content].concat(this._content.replies);
+        //this._streamView.initialize(comments, this._content.id);
     }
 };
 inherits(ThreadView, View);
@@ -111,7 +105,7 @@ ThreadView.prototype._handlePoweredByClick = function (ev) {
  */
 ThreadView.prototype._renderChildren = function () {
     this.$el.prepend($(gradientTemplate()));
-    this._streamView.render();
+    //this._streamView.render();
     this.$('.' + ThreadView.CLASSES.LOADER).remove();
     this.$el.children().first().after(this._streamView.$el);
 };

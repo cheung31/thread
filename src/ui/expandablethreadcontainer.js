@@ -5,7 +5,7 @@
 
 var $ = require('jquery');
 var inherits = require('inherits');
-var BaseThreadContainer = require('thread/ui/basethreadcontainer');
+var BaseThreadContainer = require('thread/ui/base-thread-container');
 var QueueButton = require('annotations/thread/ui/queuebutton');
 var textEnumeration = require('annotations/i18n/enumeration');
 var ThreadEvents = require('annotations/events').thread;
@@ -17,8 +17,6 @@ var ThreadEvents = require('annotations/events').thread;
  * @param {Object} opts Config options.
  */
 var ExpandableThreadContainer = function(opts) {
-    BaseThreadContainer.call(this, opts);
-
     /**
      * State of the thread container. Initially it's expanded since all empty
      * thread containers are technically expanded.
@@ -46,6 +44,10 @@ var ExpandableThreadContainer = function(opts) {
         plural: textEnumeration.get(KEYS.THREAD_EXPAND_BTN_PLURAL),
         singular: textEnumeration.get(KEYS.THREAD_EXPAND_BTN_SINGULAR)
     });
+
+    this._visCount = 0;
+    
+    BaseThreadContainer.call(this, opts);
 };
 inherits(ExpandableThreadContainer, BaseThreadContainer);
 
@@ -117,12 +119,6 @@ ExpandableThreadContainer.prototype._updateButtonText = function() {
     this._toggleBtn.setCount(this.getNumQueued());
 };
 
-/** @override */
-ExpandableThreadContainer.prototype.addComment = function(comments, opt_prepend, opt_el) {
-    BaseThreadContainer.prototype.addComment.apply(this, arguments);
-    this.updateButtonVisibility();
-};
-
 /**
  * Expand the thread of comments.
  */
@@ -172,6 +168,42 @@ ExpandableThreadContainer.prototype.getTemplateContext = function() {
             toggleBtnText: textEnumeration.get(KEYS.THREAD_EXPAND_BTN_SINGULAR)
         }
     };
+};
+
+/** @override */
+ExpandableThreadContainer.prototype.add = function(content, forcedIndex) {
+    BaseThreadContainer.prototype.add.apply(this, arguments);
+
+    var ThreadView = require('thread/ui/thread/view');
+    view = new ThreadView({
+        content: content
+    });
+
+    // Prepending the id since the list was reversed to make it easier to
+    // process in this function.
+    this._commentIds.splice(0, 0, content.id);
+
+    if (this._visCount === ExpandableThreadContainer.NUM_COLLAPSED_COMMENTS) {
+        return;
+    }
+
+    if (this._visCount === 1) {
+        this._oldestCollapsedVisibleIdx = this._commentIds.length - this._commentIds.indexOf(content.id)  - 1;
+    }
+
+    view.render();
+
+    var containerEl = this.getContainerElement();
+    containerEl.prepend(view.$el);
+    this._visCount++;
+
+    // Update the expanded variable based on the number of comments loaded
+    // initially to determine whether the replies will be collapsed or not.
+    var num = this._commentIds.length;
+    this._expanded = num <= ExpandableThreadContainer.NUM_COLLAPSED_COMMENTS;
+
+    this._updateButtonText();
+    this.updateButtonVisibility();
 };
 
 /** @override */

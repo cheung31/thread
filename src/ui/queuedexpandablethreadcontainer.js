@@ -17,6 +17,7 @@ var ThreadEvents = require('annotations/events').thread;
  * @param {Object} opts Config options.
  */
 var QueuedExpandableThreadContainer = function(opts) {
+    ExpandableThreadContainer.call(this, opts);
     var KEYS = textEnumeration.KEYS;
 
     /**
@@ -56,8 +57,6 @@ var QueuedExpandableThreadContainer = function(opts) {
      * @private
      */
     this._queuedComments = [];
-
-    ExpandableThreadContainer.call(this, opts);
 };
 inherits(QueuedExpandableThreadContainer, ExpandableThreadContainer);
 
@@ -141,24 +140,6 @@ QueuedExpandableThreadContainer.prototype.expand = function() {
 QueuedExpandableThreadContainer.prototype.getNumQueued = function() {
     var count = ExpandableThreadContainer.prototype.getNumQueued.call(this);
     return count + this._queuedComments.length;
-};
-
-QueuedExpandableThreadContainer._isAuthorContent = function (content) {
-    // If the current author posted, don't queue their comment.
-    //opt_force = comment.isUserAuthor() || opt_force;
-    // Streamed comments should be added to the queue.
-    // TODO(ryanc)
-    return false;
-};
-
-/** @override */
-QueuedExpandableThreadContainer.prototype.add = function (content, forcedIndex) {
-debugger;
-    if (QueuedExpandableThreadContainer._isAuthorContent(content)) {
-        this._queueComment(comment);
-        return;
-    }
-    ExpandableThreadContainer.prototype.add.apply(this, arguments);
 };
 
 /** @override */

@@ -66,10 +66,6 @@ function createThreadView () {
     return new ThreadView({
         el: document.getElementById('thread-view'),
         content: content
-        //assetServer: this._config.assetServer,
-        //blockId: this._getActiveBlock().id,
-        //defaultAvatar: this._config.defaultAvatar,
-        //isCustomNetwork: this._collection.isCustomNetwork()
     });
 };
 var threadView = window.threadView = createThreadView();
@@ -77,9 +73,8 @@ threadView.render();
 
 // Stream some replies
 var count = 5;
-var intervalId = setInterval(function () {
+setInterval(function () {
     if (!count) {
-        clearInterval(intervalId);
         return;
     }
     var reply = new LivefyreContent();
