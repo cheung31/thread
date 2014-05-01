@@ -52,8 +52,6 @@ inherits(BaseThreadContainer, View);
  */
 BaseThreadContainer.prototype._getCommentOptions = function (comment) {
     return {
-        assetServer: this.opts.assetServer,
-        defaultAvatar: this.opts.defaultAvatar,
         model: comment,
         contentView: this._contentViewFactory.createContentView(comment)
     };
@@ -75,9 +73,6 @@ BaseThreadContainer.prototype.addComment = function(comments, opt_prepend, opt_e
         this.processComment(!!opt_prepend, $(el), i, comments[i]);
     }
 };
-
-/** @override */
-BaseThreadContainer.prototype.comparator = SortingUtil.createdAtComparator;
 
 /**
  * Get the container element that the comments should be added to.
