@@ -72,9 +72,10 @@ var threadView = window.threadView = createThreadView();
 threadView.render();
 
 // Stream some replies
-var count = 5;
-setInterval(function () {
+var count = 0;
+var intervalId = setInterval(function () {
     if (!count) {
+        clearInterval(intervalId);
         return;
     }
     var reply = new LivefyreContent();

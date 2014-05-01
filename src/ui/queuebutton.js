@@ -52,6 +52,10 @@ QueueButton.prototype.events = {
     'click': '_handleClick'
 };
 
+QueueButton.prototype.delegateEvents = function () {
+    View.prototype.delegateEvents.call(this);
+}
+
 /** @override */
 QueueButton.prototype.template = require('hgn!templates/thread/queuebutton');
 

@@ -30,7 +30,8 @@ var BaseThreadContainer = function (opts) {
      */
     this._comments = {};
 
-    ListView.apply(this, arguments);
+    opts.autoRender = false;
+    ListView.call(this, opts);
 
     if (opts.content) {
         this.add(opts.content);

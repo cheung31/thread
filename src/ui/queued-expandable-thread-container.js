@@ -6,7 +6,7 @@ var $ = require('jquery');
 var Comment = require('annotations/models/comment');
 var ExpandableThreadContainer = require('thread/ui/expandablethreadcontainer');
 var inherits = require('inherits');
-var QueueButton = require('annotations/thread/ui/queuebutton');
+var QueueButton = require('thread/ui/queuebutton');
 var textEnumeration = require('annotations/i18n/enumeration');
 var ThreadEvents = require('annotations/events').thread;
 
@@ -153,9 +153,8 @@ QueuedExpandableThreadContainer._isAuthorContent = function (content) {
 
 /** @override */
 QueuedExpandableThreadContainer.prototype.add = function (content, forcedIndex) {
-debugger;
     if (QueuedExpandableThreadContainer._isAuthorContent(content)) {
-        this._queueComment(comment);
+        this._queueComment(content);
         return;
     }
     ExpandableThreadContainer.prototype.add.apply(this, arguments);
