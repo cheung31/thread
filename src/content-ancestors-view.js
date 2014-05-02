@@ -11,6 +11,7 @@ var ContentAncestorsView = function (opts) {
     }
 
     opts.autoRender = false;
+    opts.maxVisibleItems = 2;
     ContentListView.call(this, opts);
 
     this.content = opts.content;

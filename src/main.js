@@ -16,15 +16,18 @@ var ContentThreadView = function (opts) {
     }
 
     this._maxNestLevel = opts.maxNestLevel || 1;
+
     this.content = opts.content;
     this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
     this._rootContentView = this._contentViewFactory.createContentView(opts.content);
     this._ancestorsView = new ContentAncestorsView({
-        content: opts.content
+        content: opts.content,
+        comparator: opts.comparator
     });
     this._repliesView = new ContentRepliesView({
         content: opts.content,
-        maxNestLevel: this._maxNestLevel-1
+        maxNestLevel: this._maxNestLevel-1,
+        comparator: opts.comparator
     });
 
     View.call(this, opts);
@@ -56,6 +59,20 @@ ContentThreadView.prototype.render = function () {
     this._rootContentView.render();
     this._repliesView.render();
     this._ancestorsView.render();
+};
+
+/**
+ * Removes the content view element, and triggers 'removeContentView.hub'
+ * event for the instance to be removed from its associated ListView.
+ */
+ContentThreadView.prototype.remove = function() {
+    /**
+     * removeContentView.hub
+     * @event ContentView#removeContentView.hub
+     * @type {{contentView: ContentView}}
+     */
+    this.$el.trigger('removeContentView.hub', { contentView: this });
+    this.$el.detach();
 };
 
 module.exports = ContentThreadView;
