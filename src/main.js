@@ -37,6 +37,8 @@ inherits(ContentThreadView, View);
 ContentThreadView.prototype.template = template;
 ContentThreadView.prototype.elTag = 'section';
 
+
+
 ContentThreadView.CLASSES = {
     ancestorsView: 'lf-thread-ancestors',
     rootContentView: 'lf-thread-root-content',

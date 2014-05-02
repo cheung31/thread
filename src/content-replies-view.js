@@ -15,8 +15,14 @@ var ContentRepliesView = function (opts) {
     ContentListView.call(this, opts);
 
     this.content = opts.content;
-    this.comparator = opts.comparator || ContentRepliesView.COMPARATORS.chronological;
+    this.comparator = opts.comparator;
     this._maxNestLevel = Math.max(0, opts.maxNestLevel);
+
+    if (this.comparator === ContentRepliesView.COMPARATORS.reverseChronological) {
+        this._showMoreHeader = true;
+    } else {
+        this._showMoreHeader = false;
+    }
 
     this.content.on('reply', function (reply) {
         this.add(reply);
@@ -49,12 +55,18 @@ ContentRepliesView.prototype.createContentView = function (content) {
     var ContentThreadView = require('thread');
     return new ContentThreadView({
         content: content,
-        maxNestLevel: this._maxNestLevel-1
+        maxNestLevel: this._maxNestLevel-1,
+        showMoreHeader: this._showMoreHeader
     });
 };
 
 ContentRepliesView.prototype.render = function () {
     ContentListView.prototype.render.call(this);
+
+    if (this._showMoreHeader) {
+        this.$el.find(this.showMoreElSelector).insertBefore(this.$listEl);
+    }
+
     this._addReplies(this.content.replies);
 };
 
