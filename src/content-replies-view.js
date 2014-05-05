@@ -30,6 +30,13 @@ var ContentRepliesView = function (opts) {
 };
 inherits(ContentRepliesView, ContentListView);
 
+ContentRepliesView.prototype.events = ContentListView.prototype.events.extended({
+    'showMore.hub': function (e) {
+        e.stopPropagation();
+        this.showMore();
+    }
+});
+
 ContentRepliesView.comparators = {
     CREATEDAT_DESCENDING: function (a, b) {
         var aDate = a.content.createdAt || a.createdAt,
