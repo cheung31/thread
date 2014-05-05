@@ -10,7 +10,11 @@ Construct a ```ContentThreadView``` with the root Content item. The ```content``
 var ContentThreadView = require('thread');
 var Content = require('streamhub-sdk/content');
 
+// A content with a reply
 var myContent = new Content({ body: 'Hello!' });
+var reply = new Content({ body: 'Goodbye!' });
+myContent.addReply(reply);
+
 var threadView = new ContentThreadView({
   content: myContent
 });
