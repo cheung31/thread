@@ -15,10 +15,10 @@ var ContentRepliesView = function (opts) {
     ContentListView.call(this, opts);
 
     this.content = opts.content;
-    this.comparator = opts.comparator;
+    this.comparator = opts.comparator || ContentRepliesView.comparators.CREATEDAT_ASCENDING;
     this._maxNestLevel = Math.max(0, opts.maxNestLevel);
 
-    if (this.comparator === ContentRepliesView.COMPARATORS.reverseChronological) {
+    if (this.comparator === ContentRepliesView.comparators.CREATEDAT_DESCENDING) {
         this._showMoreHeader = true;
     } else {
         this._showMoreHeader = false;
@@ -30,13 +30,13 @@ var ContentRepliesView = function (opts) {
 };
 inherits(ContentRepliesView, ContentListView);
 
-ContentRepliesView.COMPARATORS = {
-    chronological: function (a, b) {
+ContentRepliesView.comparators = {
+    CREATEDAT_DESCENDING: function (a, b) {
         var aDate = a.content.createdAt || a.createdAt,
             bDate = b.content.createdAt || b.createdAt;
         return aDate - bDate;
     },
-    reverseChronological: function (a, b) {
+    CREATEDAT_ASCENDING: function (a, b) {
         var aDate = a.content.createdAt || a.createdAt,
             bDate = b.content.createdAt || b.createdAt;
         return bDate - aDate;
