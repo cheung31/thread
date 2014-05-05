@@ -18,6 +18,7 @@ myContent.addReply(reply);
 var threadView = new ContentThreadView({
   content: myContent
 });
+threadView.render();
 ```
 
 ### Options
