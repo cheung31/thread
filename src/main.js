@@ -15,7 +15,10 @@ var ContentThreadView = function (opts) {
         throw 'No content specified for ContentThreadView';
     }
 
-    this._maxNestLevel = opts.maxNestLevel || 1;
+    this._maxNestLevel = opts.maxNestLevel || 4;
+    if (this._maxNestLevel < 1) {
+        this._isLeaf = true;
+    }
 
     this.content = opts.content;
     this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
@@ -40,8 +43,9 @@ ContentThreadView.prototype.elTag = 'section';
 ContentThreadView.CLASSES = {
     ancestorsView: 'lf-thread-ancestors',
     rootContentView: 'lf-thread-root-content',
-    repliesView: 'lf-thread-replies'
-}
+    repliesView: 'lf-thread-replies',
+    leafNode: 'lf-thread-leaf'
+};
 
 ContentThreadView.prototype.render = function () {
     View.prototype.render.apply(this, arguments);
@@ -59,13 +63,17 @@ ContentThreadView.prototype.render = function () {
     this._rootContentView.render();
     this._repliesView.render();
     this._ancestorsView.render();
+
+    if (this._isLeaf) {
+        this._repliesView.$el.addClass(ContentThreadView.CLASSES.leafNode);
+    }
 };
 
 /**
  * Removes the content view element, and triggers 'removeContentView.hub'
  * event for the instance to be removed from its associated ListView.
  */
-ContentThreadView.prototype.remove = function() {
+ContentThreadView.prototype.remove = function () {
     /**
      * removeContentView.hub
      * @event ContentView#removeContentView.hub

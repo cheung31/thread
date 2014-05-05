@@ -60,6 +60,7 @@ ContentRepliesView.prototype._addReplies = function (replies) {
 
 ContentRepliesView.prototype.createContentView = function (content) {
     var ContentThreadView = require('thread');
+
     return new ContentThreadView({
         content: content,
         maxNestLevel: this._maxNestLevel-1,
