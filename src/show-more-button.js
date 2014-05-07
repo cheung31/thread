@@ -28,4 +28,12 @@ ShowMoreButton.prototype.setCount = function (count) {
     this.$el.html(this.template(this.getTemplateContext()));
 };
 
+ShowMoreButton.prototype.render = function () {
+    BaseShowMoreButton.prototype.render.apply(this, arguments);
+    this.$el
+        .addClass('lf-btn')
+        .addClass('lf-btn-link')
+        .addClass('lf-btn-xs');
+};
+
 module.exports = ShowMoreButton;
