@@ -11,7 +11,7 @@ var ContentRepliesView = function (opts) {
     }
 
     opts.autoRender = false;
-    opts.maxVisibleItems = 2;
+    opts.maxVisibleItems = opts.maxVisibleItems || 2;
     ContentListView.call(this, opts);
 
     this.content = opts.content;
@@ -26,6 +26,7 @@ var ContentRepliesView = function (opts) {
 
     this.content.on('reply', function (reply) {
         this.add(reply);
+        this.showMoreButton.setCount(this.content.replies.length - this._maxVisibleItems);
     }.bind(this));
 };
 inherits(ContentRepliesView, ContentListView);
@@ -56,6 +57,7 @@ ContentRepliesView.prototype._addReplies = function (replies) {
         var reply = replies[i];
         this.add(reply);
     }
+    this.showMoreButton.setCount(this.content.replies.length - this._maxVisibleItems);
 };
 
 ContentRepliesView.prototype.createContentView = function (content) {
