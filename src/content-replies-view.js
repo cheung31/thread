@@ -17,6 +17,7 @@ var ContentRepliesView = function (opts) {
     this.content = opts.content;
     this.comparator = opts.comparator || ContentRepliesView.comparators.CREATEDAT_ASCENDING;
     this._maxNestLevel = Math.max(0, opts.maxNestLevel);
+    this._nestLevel = opts.nestLevel;
 
     if (this.comparator === ContentRepliesView.comparators.CREATEDAT_DESCENDING) {
         this._showMoreHeader = true;
@@ -65,8 +66,10 @@ ContentRepliesView.prototype.createContentView = function (content) {
 
     return new ContentThreadView({
         content: content,
-        maxNestLevel: this._maxNestLevel-1,
-        showMoreHeader: this._showMoreHeader
+        maxNestLevel: this._maxNestLevel,
+        nestLevel: this._nestLevel,
+        showMoreHeader: this._showMoreHeader,
+        isRoot: false
     });
 };
 

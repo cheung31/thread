@@ -7,6 +7,7 @@
 
     .content {
         border: none;
+        border-radius: 0;
         margin-bottom: 0;
         box-shadow: none;
     }
@@ -54,6 +55,7 @@
         padding: 0 20px 0 20px;
     }
 }
+
 .lf-thread-replies {
     padding-left: 50px;
 
@@ -68,6 +70,18 @@
         }
     }
 }
+
 .lf-thread-leaf {
     padding-left: 0;
+}
+
+
+[data-thread-nest-level='0'] {
+    & > .lf-thread-root-content {
+        border-left: 3px solid #d9d9d9;
+
+        .content-header .content-header-inner {
+            padding-left: 17px;
+        }
+    }
 }

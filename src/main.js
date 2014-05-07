@@ -17,6 +17,7 @@ var ContentThreadView = function (opts) {
     }
 
     this._maxNestLevel = opts.maxNestLevel || 4;
+    this._nestLevel = opts.nestLevel || 0;
     if (this._maxNestLevel < 1) {
         this._isLeaf = true;
     }
@@ -28,9 +29,12 @@ var ContentThreadView = function (opts) {
         content: opts.content,
         comparator: opts.comparator
     });
+    this._isRoot = opts.isRoot === false ? false : true;
+
     this._repliesView = new ContentRepliesView({
         content: opts.content,
         maxNestLevel: this._maxNestLevel-1,
+        nestLevel: this._nestLevel+1,
         comparator: opts.comparator,
         maxVisibleItems: opts.maxVisibleItems,
         showMoreButton: new ShowMoreButton({
@@ -46,11 +50,15 @@ ContentThreadView.prototype.template = template;
 ContentThreadView.prototype.elTag = 'section';
 ContentThreadView.prototype.elClass = 'lf-thread';
 
-ContentThreadView.CLASSES = {
+ContentThreadView.prototype.CLASSES = {
     ancestorsView: 'lf-thread-ancestors',
     rootContentView: 'lf-thread-root-content',
     repliesView: 'lf-thread-replies',
     leafNode: 'lf-thread-leaf'
+};
+
+ContentThreadView.prototype.DATA_ATTRS = {
+    nestLevel: 'data-thread-nest-level'
 };
 
 /**
@@ -78,13 +86,13 @@ ContentThreadView.prototype.render = function () {
     View.prototype.render.apply(this, arguments);
 
     this._rootContentView.setElement(
-        this.$el.find('.'+ContentThreadView.CLASSES.rootContentView)
+        this.$el.find('.'+this.CLASSES.rootContentView)
     );
     this._ancestorsView.setElement(
-        this.$el.find('.'+ContentThreadView.CLASSES.ancestorsView)
+        this.$el.find('.'+this.CLASSES.ancestorsView)
     );
     this._repliesView.setElement(
-        this.$el.find('.'+ContentThreadView.CLASSES.repliesView)
+        this.$el.find('.'+this.CLASSES.repliesView)
     );
 
     this._rootContentView.render();
@@ -92,8 +100,10 @@ ContentThreadView.prototype.render = function () {
     this._ancestorsView.render();
 
     if (this._isLeaf) {
-        this._repliesView.$el.addClass(ContentThreadView.CLASSES.leafNode);
+        this._repliesView.$el.addClass(this.CLASSES.leafNode);
     }
+
+    this.$el.attr(this.DATA_ATTRS.nestLevel, this._nestLevel);
 };
 
 /**
