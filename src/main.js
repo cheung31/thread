@@ -36,9 +36,7 @@ var ContentThreadView = function (opts) {
         content: opts.content,
         maxNestLevel: this._maxNestLevel-1,
         nestLevel: this._nestLevel+1,
-        comparator: opts.comparator,
-        showVisibleAtHead: opts.showVisibleAtHead || true,
-        maxVisibleItems: opts.maxVisibleItems,
+        order: opts.order || this.order.NEWEST_HEAD,
         showMoreButton: new ShowMoreButton({
             content: opts.content
         })
@@ -51,6 +49,38 @@ inherits(ContentThreadView, View);
 ContentThreadView.prototype.template = template;
 ContentThreadView.prototype.elTag = 'section';
 ContentThreadView.prototype.elClass = 'lf-thread';
+
+ContentThreadView.comparators = {
+    CREATEDAT_ASCENDING: function (a, b) {
+        var aDate = a.content.createdAt || a.createdAt,
+            bDate = b.content.createdAt || b.createdAt;
+        return aDate - bDate;
+    },
+    CREATEDAT_DESCENDING: function (a, b) {
+        var aDate = a.content.createdAt || a.createdAt,
+            bDate = b.content.createdAt || b.createdAt;
+        return bDate - aDate;
+    }
+}
+
+ContentThreadView.prototype.order = {
+    NEWEST_HEAD: {
+        comparator: ContentThreadView.comparators.CREATEDAT_DESCENDING,
+        showVisibleItemsAtHead: true,
+    },
+    NEWEST_TAIL: {
+        comparator: ContentThreadView.comparators.CREATEDAT_DESCENDING,
+        showVisibleItemsAtHead: false
+    },
+    OLDEST_HEAD: {
+        comparator: ContentThreadView.comparators.CREATEDAT_ASCENDING,
+        showVisibleItemsAtHead: true
+    },
+    OLDEST_TAIL: {
+        comparator: ContentThreadView.comparators.CREATEDAT_ASCENDING,
+        showVisibleItemsAtHead: false
+    }
+}
 
 ContentThreadView.prototype.CLASSES = {
     ancestorsView: 'lf-thread-ancestors',
