@@ -72,7 +72,8 @@ function createThreadView () {
     return new ContentThreadView({
         el: document.getElementById('thread-view'),
         content: content,
-        showMoreHeader: true
+        showMoreHeader: true,
+        showVisibleAtHead: true
     });
 };
 var threadView = window.threadView = createThreadView();
