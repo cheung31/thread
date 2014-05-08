@@ -50,6 +50,9 @@ require.config({
     name: "auth",
     location: "lib/auth/src"
   },{
+    name: "livefyre-auth",
+    location: "lib/livefyre-auth/src"
+  },{
     name: 'streamhub-editor',
     location: 'lib/streamhub-editor/src/javascript'
   },{

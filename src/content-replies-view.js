@@ -18,15 +18,16 @@ var ContentRepliesView = function (opts) {
     this.comparator = opts.comparator || ContentRepliesView.comparators.CREATEDAT_ASCENDING;
     this._maxNestLevel = Math.max(0, opts.maxNestLevel);
     this._nestLevel = opts.nestLevel;
+    this._showVisibleAtHead = opts.showVisibleAtHead === false ? false : true;
 
-    if (this.comparator === ContentRepliesView.comparators.CREATEDAT_DESCENDING) {
-        this._showMoreHeader = true;
-    } else {
+    if (this._showVisibleAtHead) {
         this._showMoreHeader = false;
+    } else {
+        this._showMoreHeader = true;
     }
 
     this.content.on('reply', function (reply) {
-        this.add(reply);
+        this.add(reply, undefined, { tail: !this._showVisibleAtHead });
         this.showMoreButton.setCount(this.content.replies.length - this._maxVisibleItems);
     }.bind(this));
 };
@@ -56,7 +57,7 @@ ContentRepliesView.prototype._addReplies = function (replies) {
     replies = replies || [];
     for (var i=0; i < replies.length; i++) {
         var reply = replies[i];
-        this.add(reply);
+        this.add(reply, undefined, { tail: !this._showVisibleAtHead });
     }
     this.showMoreButton.setCount(this.content.replies.length - this._maxVisibleItems);
 };
@@ -69,6 +70,7 @@ ContentRepliesView.prototype.createContentView = function (content) {
         maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel,
         showMoreHeader: this._showMoreHeader,
+        showVisibleAtHead: this._showVisibleAtHead,
         isRoot: false
     });
 };

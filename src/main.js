@@ -16,6 +16,7 @@ var ContentThreadView = function (opts) {
         throw 'No content specified for ContentThreadView';
     }
 
+    this._isRoot = opts.isRoot === false ? false : true;
     this._maxNestLevel = opts.maxNestLevel || 4;
     this._nestLevel = opts.nestLevel || 0;
     if (this._maxNestLevel < 1) {
@@ -25,17 +26,18 @@ var ContentThreadView = function (opts) {
     this.content = opts.content;
     this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
     this._rootContentView = this._contentViewFactory.createContentView(opts.content);
+
     this._ancestorsView = new ContentAncestorsView({
         content: opts.content,
         comparator: opts.comparator
     });
-    this._isRoot = opts.isRoot === false ? false : true;
 
     this._repliesView = new ContentRepliesView({
         content: opts.content,
         maxNestLevel: this._maxNestLevel-1,
         nestLevel: this._nestLevel+1,
         comparator: opts.comparator,
+        showVisibleAtHead: opts.showVisibleAtHead || true,
         maxVisibleItems: opts.maxVisibleItems,
         showMoreButton: new ShowMoreButton({
             content: opts.content
