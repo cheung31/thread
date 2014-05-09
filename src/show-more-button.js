@@ -31,9 +31,9 @@ ShowMoreButton.prototype.setCount = function (count) {
 ShowMoreButton.prototype.render = function () {
     BaseShowMoreButton.prototype.render.apply(this, arguments);
     this.$el
-        .addClass('lf-btn')
-        .addClass('lf-btn-link')
-        .addClass('lf-btn-xs');
+        .addClass('hub-btn')
+        .addClass('hub-btn-link')
+        .addClass('hub-btn-xs');
 };
 
 module.exports = ShowMoreButton;

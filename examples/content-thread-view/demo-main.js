@@ -81,17 +81,22 @@ threadView.render();
 
 // Stream some replies
 var count = 5;
+var newReplies = [];
+for (var i=0; i < count; i++) {
+    var reply = new LivefyreContent();
+    reply.body = i+1;
+    reply.id = i+1;
+    reply.createdAt = new Date(now - (6000000 * i+1));
+    reply.parentId = reply3.id;
+    newReplies.push(reply);
+}
 var intervalId = setInterval(function () {
     if (!count) {
         clearInterval(intervalId);
         return;
     }
-    var reply = new LivefyreContent();
-    reply.body = count;
-    reply.id = count;
-    reply.createdAt = new Date(now - (6000000 * count));
-    reply.parentId = reply3.id;
-    reply3.addReply(reply)
+    var reply = newReplies.pop();
+    reply3.addReply(reply);
     count--;
 }, 1000);
 

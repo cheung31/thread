@@ -1,7 +1,8 @@
 'use strict';
 
 var inherits = require('inherits');
-var ContentListView = require('streamhub-sdk/content/views/content-list-view');
+var ListView = require('streamhub-sdk/views/list-view');
+var View = require('streamhub-sdk/view');
 
 var ContentRepliesView = function (opts) {
     opts = opts || {};
@@ -10,16 +11,24 @@ var ContentRepliesView = function (opts) {
         throw 'Expected opts.content when constructing ContentRepliesView';
     }
 
+    View.call(this, opts);
+
     opts.autoRender = false;
-    opts.maxVisibleItems = opts.maxVisibleItems || 2;
-    ContentListView.call(this, opts);
+    this._maxNestLevel = Math.max(0, opts.maxNestLevel);
+    this._nestLevel = opts.nestLevel;
+    this._maxVisibleItems = opts.maxVisibleItems;
+    this._showVisibleItemsAtHead = opts.order.showVisibleItemsAtHead;
 
     this.content = opts.content;
     this._order = opts.order;
     this.comparator = opts.order.comparator;
-    this._maxNestLevel = Math.max(0, opts.maxNestLevel);
-    this._nestLevel = opts.nestLevel;
-    this._showVisibleItemsAtHead = opts.order.showVisibleItemsAtHead;
+
+    this._listView = new ListView({
+        comparator: this.comparator,
+        autoRender: true,
+        showMoreButton: opts.showMoreButton,
+        initial: opts.maxVisibleItems
+    });
 
     if (this._showVisibleItemsAtHead === true) {
         this._showMoreHeader = false;
@@ -28,29 +37,66 @@ var ContentRepliesView = function (opts) {
     }
 
     this.content.on('reply', function (reply) {
-        this.add(reply, undefined, { tail: this._showMoreHeader });
-        this.showMoreButton.setCount(this.content.replies.length - this._maxVisibleItems);
+        if (this._showMoreHeader) {
+            this.push(reply);
+        } else {
+            this.unshift(reply, { stack: true });
+        }
+
+        this._listView.showMoreButton.setCount(this.content.replies.length - this._listView.views.length);
     }.bind(this));
 };
-inherits(ContentRepliesView, ContentListView);
+inherits(ContentRepliesView, View);
 
-ContentRepliesView.prototype.events = ContentListView.prototype.events.extended({
+ContentRepliesView.prototype.events = View.prototype.events.extended({
     'showMore.hub': function (e) {
         e.stopPropagation();
-        this.showMore();
+        this._listView.showMore();
     }
 });
 
-ContentRepliesView.prototype._addReplies = function (replies) {
-    replies = replies || [];
-    for (var i=0; i < replies.length; i++) {
-        var reply = replies[i];
-        this.add(reply, undefined, { tail: this._showMoreHeader });
-    }
-    this.showMoreButton.setCount(this.content.replies.length - this._maxVisibleItems);
+/**
+ * Insert reply at back
+ */
+ContentRepliesView.prototype.push = function (content) {
+    var replyView = this._createReplyView(content);
+    this._listView.more.write(replyView);
 };
 
-ContentRepliesView.prototype.createContentView = function (content) {
+/**
+ * Insert reply at front
+ */
+ContentRepliesView.prototype.unshift =  function (content, opts) {
+    opts = opts || {};
+
+    var replyView = this._createReplyView(content);
+    if (opts.stack) {
+        this._listView.more.stack(replyView);
+    } else {
+        this._listView.more._stack.push(replyView);
+    }
+};
+
+ContentRepliesView.prototype.addReply = function (content) {
+    if (this._showMoreHeader) {
+        this.unshift(content);
+    } else {
+        this.push(content);
+    }
+};
+
+ContentRepliesView.prototype._addReplies = function (replies) {
+    replies = replies || [];
+    replies.sort(this.comparator);
+    
+    for (var i=0; i < replies.length; i++) {
+        var reply = replies[i];
+        this.addReply(reply);
+    }
+    this._listView.showMoreButton.setCount(this.content.replies.length - this._maxVisibleItems);
+};
+
+ContentRepliesView.prototype._createReplyView = function (content) {
     var ContentThreadView = require('thread');
 
     return new ContentThreadView({
@@ -63,10 +109,11 @@ ContentRepliesView.prototype.createContentView = function (content) {
 };
 
 ContentRepliesView.prototype.render = function () {
-    ContentListView.prototype.render.call(this);
+    this._listView.setElement(this.$el);
+    this._listView.render();
 
     if (this._showMoreHeader) {
-        this.$el.find(this.showMoreElSelector).insertBefore(this.$listEl);
+        this.$el.find(this._listView.showMoreElSelector).insertBefore(this._listView.$listEl);
     }
 
     this._addReplies(this.content.replies);

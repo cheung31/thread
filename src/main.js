@@ -22,6 +22,7 @@ var ContentThreadView = function (opts) {
     if (this._maxNestLevel < 1) {
         this._isLeaf = true;
     }
+    this._maxVisibleItems = opts.maxVisibleItems || 2;
 
     this.content = opts.content;
     this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
@@ -36,6 +37,7 @@ var ContentThreadView = function (opts) {
         content: opts.content,
         maxNestLevel: this._maxNestLevel-1,
         nestLevel: this._nestLevel+1,
+        maxVisibleItems: this._maxVisibleItems,
         order: opts.order || this.order.NEWEST_HEAD,
         showMoreButton: new ShowMoreButton({
             content: opts.content
@@ -52,13 +54,13 @@ ContentThreadView.prototype.elClass = 'lf-thread';
 
 ContentThreadView.comparators = {
     CREATEDAT_ASCENDING: function (a, b) {
-        var aDate = a.content.createdAt || a.createdAt,
-            bDate = b.content.createdAt || b.createdAt;
+        var aDate = (a.content && a.content.createdAt) || a.createdAt,
+            bDate = (b.content && b.content.createdAt) || b.createdAt;
         return aDate - bDate;
     },
     CREATEDAT_DESCENDING: function (a, b) {
-        var aDate = a.content.createdAt || a.createdAt,
-            bDate = b.content.createdAt || b.createdAt;
+        var aDate = (a.content && a.content.createdAt) || a.createdAt,
+            bDate = (b.content && b.content.createdAt) || b.createdAt;
         return bDate - aDate;
     }
 }
