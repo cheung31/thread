@@ -15,17 +15,16 @@ var ContentThreadView = function (opts) {
     if (! opts.content) {
         throw 'No content specified for ContentThreadView';
     }
+    this.content = opts.content;
 
-    this._isRoot = opts.isRoot === false ? false : true;
     this._maxNestLevel = opts.maxNestLevel || 4;
     this._nestLevel = opts.nestLevel || 0;
-    if (this._maxNestLevel < 1) {
+    if (this._maxNestLevel < 1 || this.content.replies.length === 0) {
         this._isLeaf = true;
     }
     this._maxVisibleItems = opts.maxVisibleItems || 2;
 
-    this.content = opts.content;
-    this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
+    this._contentViewFactory = opts.rootContentViewFactory || new ContentViewFactory();
     this._rootContentView = this._contentViewFactory.createContentView(opts.content);
 
     this._ancestorsView = new ContentAncestorsView({
@@ -122,19 +121,20 @@ ContentThreadView.prototype.render = function () {
     this._rootContentView.setElement(
         this.$el.find('.'+this.CLASSES.rootContentView)
     );
+    this._rootContentView.render();
+
     this._ancestorsView.setElement(
         this.$el.find('.'+this.CLASSES.ancestorsView)
     );
+    this._ancestorsView.render();
+
     this._repliesView.setElement(
         this.$el.find('.'+this.CLASSES.repliesView)
     );
-
-    this._rootContentView.render();
     this._repliesView.render();
-    this._ancestorsView.render();
 
     if (this._isLeaf) {
-        this._repliesView.$el.addClass(this.CLASSES.leafNode);
+        this.$el.addClass(this.CLASSES.leafNode);
     }
 
     this.$el.attr(this.DATA_ATTRS.nestLevel, this._nestLevel);
