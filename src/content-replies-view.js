@@ -20,6 +20,7 @@ var ContentRepliesView = function (opts) {
     this._showVisibleItemsAtHead = opts.order.showVisibleItemsAtHead;
 
     this.content = opts.content;
+    this._contentViewFactory = opts.contentViewFactory;
     this._order = opts.order;
     this.comparator = opts.order.comparator;
 
@@ -104,7 +105,8 @@ ContentRepliesView.prototype._createReplyView = function (content) {
         maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel,
         order: this._order,
-        isRoot: false
+        isRoot: false,
+        replyContentViewFactory: this._contentViewFactory
     });
 };
 

@@ -24,8 +24,8 @@ var ContentThreadView = function (opts) {
     }
     this._maxVisibleItems = opts.maxVisibleItems || 2;
 
-    this._contentViewFactory = opts.rootContentViewFactory || new ContentViewFactory();
-    this._rootContentView = this._contentViewFactory.createContentView(opts.content);
+    this._rootContentViewFactory = opts.rootContentViewFactory || new ContentViewFactory();
+    this._rootContentView = this._rootContentViewFactory.createContentView(opts.content, opts);
 
     this._ancestorsView = new ContentAncestorsView({
         content: opts.content,
@@ -40,7 +40,8 @@ var ContentThreadView = function (opts) {
         order: opts.order || this.order.NEWEST_HEAD,
         showMoreButton: new ShowMoreButton({
             content: opts.content
-        })
+        }),
+        contentViewFactory: opts.replyContentViewFactory || new ContentViewFactory()
     });
 
     View.call(this, opts);
