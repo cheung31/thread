@@ -85,6 +85,7 @@
         box-shadow: none;
         position: relative;
         z-index: 1;
+        margin-left: 10px;
     }
 }
 
@@ -125,10 +126,11 @@
 
 .lf-thread-replies [data-thread-nest-level='1'] > .lf-thread-root-content {
     border-left: 3px solid #d9d9d9;
+    margin-top: 20px;
 
     .content-header .content-header-inner {
         padding-left: 17px;
-        padding-top: 0;
+        padding-top: 0px;
     }
 
     .content-body {
@@ -138,4 +140,7 @@
     .content-footer {
         padding-left: 53px;
     }
+}
+.lf-thread-replies [data-thread-nest-level='1']:first-child > .lf-thread-root-content {
+    margin-top: 0;
 }
