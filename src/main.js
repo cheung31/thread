@@ -15,6 +15,10 @@ var ContentThreadView = function (opts) {
     if (! opts.content) {
         throw 'No content specified for ContentThreadView';
     }
+
+    this._themeClass = opts.themeClass || 'lf-thread-default';
+    this.elClass += ' '+this._themeClass;
+
     this.content = opts.content;
 
     this._maxNestLevel = opts.maxNestLevel || 4;

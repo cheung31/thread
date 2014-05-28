@@ -12,11 +12,7 @@ require.config({
     'jasmine-jquery': 'lib/jasmine-jquery/lib/jasmine-jquery',
     inherits: 'lib/inherits/inherits',
     'event-emitter': 'lib/event-emitter/src/event-emitter',
-  },
-  map: {
-    '*': {
-      'debug': 'streamhub-sdk/debug'
-    }
+    'debug': 'lib/debug/debug'
   },
   packages: [{
     name: "thread",
