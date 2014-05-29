@@ -49,9 +49,6 @@ require.config({
     name: "livefyre-auth",
     location: "lib/livefyre-auth/src"
   },{
-    name: 'streamhub-editor',
-    location: 'lib/streamhub-editor/src/javascript'
-  },{
     name: 'livefyre-bootstrap',
     location: 'lib/livefyre-bootstrap/src'
   }],
