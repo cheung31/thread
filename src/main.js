@@ -26,13 +26,7 @@ var ContentThreadView = function (opts) {
     if (!this.content.parentId) {
         this._isRoot = true;
     }
-    if (this.content.body === '<p>asdf</p>') {
-        debugger;
-    }
-    if (this._maxNestLevel === this._nestLevel) {
-        this._isLeaf = true;
-    }
-    if ((this._isRoot && this.content.replies.length === 0)) {
+    if (this._maxNestLevel === this._nestLevel || (this._isRoot && this.content.replies.length === 0)) {
         this._isLeaf = true;
     }
     this._maxVisibleItems = opts.maxVisibleItems || 2;
