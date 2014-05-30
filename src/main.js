@@ -23,7 +23,16 @@ var ContentThreadView = function (opts) {
 
     this._maxNestLevel = opts.maxNestLevel || 4;
     this._nestLevel = opts.nestLevel || 0;
-    if (this._maxNestLevel < 1 || this.content.replies.length === 0) {
+    if (!this.content.parentId) {
+        this._isRoot = true;
+    }
+    if (this.content.body === '<p>asdf</p>') {
+        debugger;
+    }
+    if (this._maxNestLevel === this._nestLevel) {
+        this._isLeaf = true;
+    }
+    if ((this._isRoot && this.content.replies.length === 0)) {
         this._isLeaf = true;
     }
     this._maxVisibleItems = opts.maxVisibleItems || 2;
@@ -38,7 +47,7 @@ var ContentThreadView = function (opts) {
 
     this._repliesView = new ContentRepliesView({
         content: opts.content,
-        maxNestLevel: this._maxNestLevel-1,
+        maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel+1,
         maxVisibleItems: this._maxVisibleItems,
         order: opts.order || this.order.NEWEST_HEAD,
@@ -92,7 +101,8 @@ ContentThreadView.prototype.CLASSES = {
     ancestorsView: 'lf-thread-ancestors',
     rootContentView: 'lf-thread-root-content',
     repliesView: 'lf-thread-replies',
-    leafNode: 'lf-thread-leaf'
+    leafNode: 'lf-thread-leaf',
+    rootNode: 'lf-thread-root'
 };
 
 ContentThreadView.prototype.DATA_ATTRS = {
@@ -140,6 +150,10 @@ ContentThreadView.prototype.render = function () {
 
     if (this._isLeaf) {
         this.$el.addClass(this.CLASSES.leafNode);
+    }
+
+    if (this._isRoot) {
+        this.$el.addClass(this.CLASSES.rootNode);
     }
 
     this.$el.attr(this.DATA_ATTRS.nestLevel, this._nestLevel);

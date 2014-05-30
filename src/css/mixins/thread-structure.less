@@ -80,15 +80,17 @@
     }
 
     // Root-level
-    &.lf-thread-leaf[data-thread-nest-level='0'] > .lf-thread-root-content {
+    &.lf-thread-root[data-thread-nest-level='0'] > .lf-thread-root-content {
         padding-bottom: 20px;
-        margin-bottom: 20px;
+    }
+    &.lf-thread-root[data-thread-nest-level='0'] > .lf-thread-replies{
+        padding-left: 0;
     }
     &.lf-thread-leaf[data-thread-nest-level='0'] > .lf-thread-replies {
         display: none;
     }
-    &.lf-thread-leaf[data-thread-nest-level='0'] > .lf-thread-replies{
-        padding-left: 0;
+    &.lf-thread-leaf[data-thread-nest-level='0'] > .lf-thread-root-content {
+        margin-bottom: 20px;
     }
 
     &[data-thread-nest-level='0'] > .lf-thread-replies {
@@ -98,6 +100,7 @@
         margin-bottom: 20px;
     }
 
+    // First-level Reply
     .lf-thread-replies [data-thread-nest-level='1'] > .lf-thread-root-content {
         margin-top: 20px;
 
@@ -125,5 +128,10 @@
 
     &[data-thread-nest-level='1'] > .lf-thread-replies {
         padding-left: 53px;
+    }
+
+    // Leaf-level Reply
+    .lf-thread-leaf .lf-thread-replies {
+        padding-left: 0;
     }
 }
