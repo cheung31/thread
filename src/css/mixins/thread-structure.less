@@ -11,7 +11,7 @@
     .lf-thread-replies {
         position: relative;
         z-index: 0;
-        padding-left: 50px;
+        padding-left: 34px;
 
         .content {
             margin-bottom: 0;
@@ -121,5 +121,9 @@
     .lf-thread-replies [data-thread-nest-level='1']:first-child > .lf-thread-root-content {
         margin-top: 0;
         padding-left: 0;
+    }
+
+    &[data-thread-nest-level='1'] > .lf-thread-replies {
+        padding-left: 53px;
     }
 }
