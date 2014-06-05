@@ -11,6 +11,7 @@ require.config({
     'jasmine-html': 'lib/jasmine/lib/jasmine-core/jasmine-html',
     'jasmine-jquery': 'lib/jasmine-jquery/lib/jasmine-jquery',
     inherits: 'lib/inherits/inherits',
+    observer: 'lib/observer/src/observer',
     'event-emitter': 'lib/event-emitter/src/event-emitter',
     'debug': 'lib/debug/debug'
   },
@@ -35,6 +36,13 @@ require.config({
   },{
     name: "streamhub-sdk/modal",
     location: "lib/streamhub-sdk/src/modal"
+  },{
+    name: "streamhub-editor",
+    location: "lib/streamhub-editor/src/javascript",
+    main: "editor"
+  },{
+    name: 'streamhub-editor/templates',
+    location: 'lib/streamhub-editor/src/templates'
   },{
     name: "stream",
     location: "lib/stream/src"
