@@ -12,6 +12,6 @@
     "jasmine": "1.3.1",
     "jasmine-jquery": "1.6.0",
     "livefyre-auth": "git://github.com/livefyre/livefyre-auth.git",
-    "observer": "git@github.com:Livefyre/Observer.git#0.1.0"
+    "observer": "git://github.com/Livefyre/Observer.git#0.1.0"
   }
 }
