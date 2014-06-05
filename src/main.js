@@ -6,6 +6,7 @@ var View = require('streamhub-sdk/view');
 var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
 var ContentAncestorsView = require('thread/content-ancestors-view');
 var ContentRepliesView = require('thread/content-replies-view');
+var ContentListView = require('streamhub-sdk/content/views/content-list-view');
 var ShowMoreButton = require('thread/show-more-button');
 var template = require('hgn!thread/templates/content-thread-view');
 
@@ -43,13 +44,22 @@ var ContentThreadView = function (opts) {
         content: opts.content,
         maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel+1,
-        maxVisibleItems: this._maxVisibleItems,
-        order: opts.order || this.order.NEWEST_HEAD,
+        maxVisibleItems: this._isRoot ? this._maxVisibleItems : opts.maxVisibleReplies || Infinity,
+        order: opts.order || this.order.NEWEST,
         showMoreButton: new ShowMoreButton({
+            content: opts.content
+        }),
+        showQueueButton: new ShowMoreButton({
             content: opts.content
         }),
         contentViewFactory: opts.replyContentViewFactory || new ContentViewFactory()
     });
+
+    this.content.on('reply', function (reply) {
+        if (this._isRoot) {
+            this.$el.removeClass(this.CLASSES.leafNode);
+        }
+    }.bind(this));
 
     View.call(this, opts);
 };
@@ -73,22 +83,22 @@ ContentThreadView.comparators = {
 }
 
 ContentThreadView.prototype.order = {
-    NEWEST_HEAD: {
-        comparator: ContentThreadView.comparators.CREATEDAT_DESCENDING,
+    NEWEST: {
+        comparator: ContentRepliesView.comparators.CREATEDAT_DESCENDING,
         showVisibleItemsAtHead: true,
     },
-    NEWEST_TAIL: {
-        comparator: ContentThreadView.comparators.CREATEDAT_DESCENDING,
-        showVisibleItemsAtHead: false
-    },
-    OLDEST_HEAD: {
-        comparator: ContentThreadView.comparators.CREATEDAT_ASCENDING,
+    //NEWEST_TAIL: {
+    //    comparator: ContentRepliesView.comparators.CREATEDAT_DESCENDING,
+    //    showVisibleItemsAtHead: false
+    //},
+    OLDEST: {
+        comparator: ContentRepliesView.comparators.CREATEDAT_ASCENDING,
         showVisibleItemsAtHead: true
-    },
-    OLDEST_TAIL: {
-        comparator: ContentThreadView.comparators.CREATEDAT_ASCENDING,
-        showVisibleItemsAtHead: false
     }
+    //OLDEST_TAIL: {
+    //    comparator: ContentRepliesView.comparators.CREATEDAT_ASCENDING,
+    //    showVisibleItemsAtHead: false
+    //}
 }
 
 ContentThreadView.prototype.CLASSES = {
@@ -102,6 +112,14 @@ ContentThreadView.prototype.CLASSES = {
 ContentThreadView.prototype.DATA_ATTRS = {
     nestLevel: 'data-thread-nest-level'
 };
+
+ContentThreadView.prototype.events = View.prototype.events.extended({
+    'writeContent.hub': function (e, content) {
+        e.stopPropagation();
+        var replyView = ContentListView.prototype.getContentView.call(this._repliesView._listView, content);
+        this._repliesView._listView.add(replyView);
+    }
+});
 
 /**
  * Return a number indicating the number of descendants there are to the

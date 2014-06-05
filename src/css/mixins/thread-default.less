@@ -26,7 +26,8 @@
             font-size: 13px;
         }
 
-        .hub-list-more {
+        .hub-list-more,
+        .hub-list-queue {
             box-shadow: none;
         }
     }
@@ -46,6 +47,9 @@
         border: 1px solid #d2d2d2;
         border: 1px solid rgba(0,0,0,0.15);
         border-top: none;
+        max-height: 500px;
+        overflow: scroll;
+        overflow-x: hidden;
     }
 
     .lf-thread-replies [data-thread-nest-level='1'] > .lf-thread-root-content {
