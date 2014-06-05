@@ -1,9 +1,9 @@
-'use strict';
-
 var inherits = require('inherits');
 var ListView = require('streamhub-sdk/views/list-view');
 var View = require('streamhub-sdk/view');
 var Auth = require('auth');
+
+'use strict';
 
 var ContentRepliesView = function (opts) {
     opts = opts || {};

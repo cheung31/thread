@@ -1,5 +1,3 @@
-'use strict';
-
 var inherits = require('inherits');
 
 var View = require('streamhub-sdk/view');
@@ -9,6 +7,8 @@ var ContentRepliesView = require('thread/content-replies-view');
 var ContentListView = require('streamhub-sdk/content/views/content-list-view');
 var ShowMoreButton = require('thread/show-more-button');
 var template = require('hgn!thread/templates/content-thread-view');
+
+'use strict';
 
 var ContentThreadView = function (opts) {
     opts = opts || {};
@@ -87,14 +87,14 @@ ContentThreadView.prototype.order = {
         comparator: ContentRepliesView.comparators.CREATEDAT_DESCENDING,
         showVisibleItemsAtHead: true,
     },
-    //NEWEST_TAIL: {
-    //    comparator: ContentRepliesView.comparators.CREATEDAT_DESCENDING,
-    //    showVisibleItemsAtHead: false
-    //},
     OLDEST: {
         comparator: ContentRepliesView.comparators.CREATEDAT_ASCENDING,
         showVisibleItemsAtHead: true
     }
+    //,NEWEST_TAIL: {
+    //    comparator: ContentRepliesView.comparators.CREATEDAT_DESCENDING,
+    //    showVisibleItemsAtHead: false
+    //},
     //OLDEST_TAIL: {
     //    comparator: ContentRepliesView.comparators.CREATEDAT_ASCENDING,
     //    showVisibleItemsAtHead: false
