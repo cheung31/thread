@@ -10,17 +10,28 @@ var template = require('hgn!thread/templates/content-thread-view');
 
 'use strict';
 
+/**
+ * A view that displays a content item and its replies
+ * @param [opts] {Object}
+ * @param [opts.content] {Content} The content item to be displayed
+ * @param [opts.themeClass] {string} A class name to be added to the view for theming purposes
+ * @param [opts.maxNestLevel] {int} The maximum level of nesting for replies
+ * @param [opts.nestLevel] {int} The current nest level
+ * @param [opts.rootContentViewFactory] {ContentViewFactory} A factory to create
+ * ContentViews for the root content
+ * @param [opts.replyContentViewFactory] {ContentViewFactory} A factory to
+ * create ContentViews for replies
+ */
 var ContentThreadView = function (opts) {
     opts = opts || {};
 
     if (! opts.content) {
         throw 'No content specified for ContentThreadView';
     }
+    this.content = opts.content;
 
     this._themeClass = opts.themeClass || 'lf-thread-default';
     this.elClass += ' '+this._themeClass;
-
-    this.content = opts.content;
 
     this._maxNestLevel = opts.maxNestLevel || 4;
     this._nestLevel = opts.nestLevel || 0;
@@ -94,14 +105,6 @@ ContentThreadView.prototype.order = {
         comparator: ContentRepliesView.comparators.CREATEDAT_ASCENDING,
         showVisibleItemsAtHead: true
     }
-    //,NEWEST_TAIL: {
-    //    comparator: ContentRepliesView.comparators.CREATEDAT_DESCENDING,
-    //    showVisibleItemsAtHead: false
-    //},
-    //OLDEST_TAIL: {
-    //    comparator: ContentRepliesView.comparators.CREATEDAT_ASCENDING,
-    //    showVisibleItemsAtHead: false
-    //}
 }
 
 ContentThreadView.prototype.CLASSES = {
