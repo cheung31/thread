@@ -24,6 +24,9 @@ var ContentThreadView = function (opts) {
 
     this._maxNestLevel = opts.maxNestLevel || 4;
     this._nestLevel = opts.nestLevel || 0;
+    this._isRoot = false;
+    this._isLeaf = false;
+
     if (!this.content.parentId) {
         this._isRoot = true;
     }

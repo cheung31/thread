@@ -7,6 +7,12 @@ var ListView = require('streamhub-sdk/views/list-view');
 
 describe('ContentThreadView', function () {
     var content = new Content({ body: 'hi' });
+    content.id = 'content1';
+
+    afterEach(function () {
+        content.parentId = undefined;
+        content.replies = [];
+    });
 
     describe('can be constructed with just opts.content', function () {
         var threadView;
@@ -73,4 +79,35 @@ describe('ContentThreadView', function () {
             expect(threadView._repliesView._order).toBe(threadView.order.NEWEST);
         });
     });
+
+    describe('A content item with no replies and no parents', function () {
+        var threadView = new ContentThreadView({
+            content: content
+        });
+
+        it('is a root and leaf ContentThreadView', function () {
+            expect(threadView._isRoot).toBe(true);
+            expect(threadView._isLeaf).toBe(true);
+        });
+    });
+
+    describe('A content item with parents (a reply)', function () {
+        var parentContent = new Content({ body: 'parent' });
+        parentContent.id = 'content2';
+
+        content.parentId = parentContent.id;
+        var threadView = new ContentThreadView({
+            content: content
+        });
+
+        it('is not a root ContentThreadView', function () {
+            expect(threadView._isRoot).toBe(false);
+        });
+    });
+
+    //isLeaf test
+
+    //maxVisibleItems test
+
+    //order test
 });
