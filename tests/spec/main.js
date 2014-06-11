@@ -35,8 +35,8 @@ describe('ContentThreadView', function () {
             expect(threadView._maxVisibleItems).toBe(2);
         });
 
-        it('has a default root content view factory', function () {
-            expect(threadView._rootContentViewFactory instanceof ContentViewFactory).toBe(true);
+        it('has a default content view factory', function () {
+            expect(threadView._contentViewFactory instanceof ContentViewFactory).toBe(true);
         });
     });
 

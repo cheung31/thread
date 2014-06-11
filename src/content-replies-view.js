@@ -80,7 +80,7 @@ ContentRepliesView.comparators = {
             bDate = (b.content && b.content.createdAt) || b.createdAt;
         return bDate - aDate;
     }
-}
+};
 
 /**
  * Insert reply at back of more stream
@@ -125,7 +125,7 @@ ContentRepliesView.prototype._createReplyView = function (content) {
         nestLevel: this._nestLevel,
         order: this._order,
         isRoot: false,
-        replyContentViewFactory: this._contentViewFactory
+        contentViewFactory: this._contentViewFactory
     });
 };
 
