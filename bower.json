@@ -15,7 +15,7 @@
     "livefyre-auth": "git://github.com/livefyre/livefyre-auth.git",
     "observer": "git://github.com/Livefyre/Observer.git#0.1.0"
   },
-  "resolutions: {
+  "resolutions": {
     "view": "~1.3"
   }
 }
