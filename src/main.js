@@ -3,7 +3,6 @@ var inherits = require('inherits');
 var ListView = require('streamhub-sdk/views/list-view');
 var CompositeView = require('view/composite-view');
 var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
-var ContentAncestorsView = require('thread/content-ancestors-view');
 var ContentRepliesView = require('thread/content-replies-view');
 var ContentListView = require('streamhub-sdk/content/views/content-list-view');
 var ShowMoreButton = require('thread/show-more-button');
@@ -15,8 +14,12 @@ var ShowMoreButton = require('thread/show-more-button');
  * @param [opts] {Object}
  * @param [opts.content] {Content} The content item to be displayed
  * @param [opts.themeClass] {string} A class name to be added to the view for theming purposes
- * @param [opts.maxNestLevel] {int} The maximum level of nesting for replies
- * @param [opts.nestLevel] {int} The current nest level
+ * @param [opts.maxNestLevel] {number} The maximum level of nesting for replies
+ * @param [opts.nestLevel] {number} The current nest level
+ * @param [opts.maxVisibleItems] {number}
+ * @param [opts.order] {Object}
+ * @param [opts.rootContentView] {ContentView} The content view to use as the
+ *        root of the thread
  * @param [opts.contentViewFactory] {ContentViewFactory} A factory to create
  *        ContentViews for the root and reply content
  */
@@ -48,16 +51,11 @@ var ContentThreadView = function (opts) {
     this._rootContentView = opts.rootContentView || this._contentViewFactory.createContentView(opts.content, opts);
     this._rootContentView.$el.addClass('lf-thread-root-content');
 
-    this._ancestorsView = new ContentAncestorsView({
-        content: opts.content,
-        comparator: opts.comparator,
-    });
-
     this._repliesView = new ContentRepliesView({
         content: opts.content,
         maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel+1,
-        maxVisibleItems: this._isRoot ? this._maxVisibleItems : opts.maxVisibleReplies || Infinity,
+        maxVisibleItems: this._isRoot ? this._maxVisibleItems : Infinity,
         order: opts.order || this.order.CREATEDAT_DESCENDING,
         showMoreButton: new ShowMoreButton({
             content: opts.content
@@ -75,7 +73,6 @@ var ContentThreadView = function (opts) {
     }.bind(this));
 
     CompositeView.call(this,
-        this._ancestorsView,
         this._rootContentView,
         this._repliesView,
         opts);
@@ -85,6 +82,10 @@ inherits(ContentThreadView, CompositeView);
 ContentThreadView.prototype.elTag = 'section';
 ContentThreadView.prototype.elClass = 'lf-thread';
 
+/**
+ * Sort orders of content
+ * @enum {Object}
+ */
 ContentThreadView.prototype.order = {
     CREATEDAT_DESCENDING: {
         comparator: ListView.prototype.comparators.CREATEDAT_DESCENDING,
@@ -96,11 +97,19 @@ ContentThreadView.prototype.order = {
     }
 };
 
+/**
+ * Classnames used in thread view DOM
+ * @enum {string}
+ */
 ContentThreadView.prototype.CLASSES = {
     leafNode: 'lf-thread-leaf',
     rootNode: 'lf-thread-root'
 };
 
+/**
+ * Data attributes used in thread view DOM
+ * @enum {string}
+ */
 ContentThreadView.prototype.DATA_ATTRS = {
     nestLevel: 'data-thread-nest-level'
 };

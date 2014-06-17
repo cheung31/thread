@@ -5,6 +5,17 @@ var Auth = require('auth');
 
 'use strict';
 
+/**
+ * A view that displays a content item's replies
+ * @param [opts] {Object}
+ * @param [opts.content] {Content} The content item to be displayed
+ * @param [opts.maxNestLevel] {int} The maximum level of nesting for replies
+ * @param [opts.nestLevel] {int} The current nest level
+ * @param [opts.contentViewFactory] {ContentViewFactory} A factory to create
+ *        ContentViews for the root and reply content
+ * @param [opts.queueInitial] {number} The number of items to display before
+ *        being held by queue.
+ */
 var ContentRepliesView = function (opts) {
     opts = opts || {};
 
@@ -36,7 +47,6 @@ var ContentRepliesView = function (opts) {
         queueInitial: this._queueInitial
     });
 
-
     this.content.on('reply', function (reply) {
         this._onReply(reply);
     }.bind(this));
@@ -56,6 +66,10 @@ ContentRepliesView.prototype.events = View.prototype.events.extended({
     }
 });
 
+/**
+ * Handler of the 'reply' event emitted by a Content instance
+ * @param reply {Content} The content item representing the reply being added
+ */
 ContentRepliesView.prototype._onReply = function (reply) {
     var button,
         buttonStream,
@@ -80,24 +94,38 @@ ContentRepliesView.prototype._onReply = function (reply) {
     button.setCount(buttonStream.getSize());
 };
 
+/**
+ * Checks whether a Content's author is the same as the user currently
+ * authenticated
+ * @param content {Content} The content instance to check the author against the
+ *      authenticated user
+ * @return {boolean} Whether the content's author is the same as the
+ *      authenticated user
+ */
 ContentRepliesView.prototype._isContentByAuthor = function (content) {
     return content.author.id === (Auth.get('livefyre') && Auth.get('livefyre').get('id')) && this._listView.queue.getSize() === 0;
 };
 
 /**
- * Insert reply at back of more stream
+ * Insert reply view at back of more stream
+ * @param replyView {ContentView} The reply view to be held in more stream
  */
 ContentRepliesView.prototype.pushMore = function (replyView) {
     this._listView.more.write(replyView);
 };
 
 /**
- * Insert reply at back of queue stream
+ * Insert reply view at back of queue stream
+ * @param replyView {ContentView} The reply view to be held in the queue stream
  */
 ContentRepliesView.prototype.pushQueue = function (replyView) {
     this._listView.queue.write(replyView);
 };
 
+/**
+ * Insert a set of replies
+ * @param replies {Array.<Content>} The set of replies to add to the view
+ */
 ContentRepliesView.prototype._addReplies = function (replies) {
     replies = replies || [];
     replies.sort(this.comparator);
@@ -116,6 +144,11 @@ ContentRepliesView.prototype._addReplies = function (replies) {
     this._listView.showMoreButton.setCount(this.content.replies.length - this._maxVisibleItems);
 };
 
+/**
+ * Create a reply view from a Content instance representing a reply
+ * @param content {Content} A Content instance representing a reply
+ * @return {ContentThreadView}
+ */
 ContentRepliesView.prototype._createReplyView = function (content) {
     var ContentThreadView = require('thread');
 
