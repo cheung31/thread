@@ -5,7 +5,7 @@
     "./src/main.js"
   ],
   "dependencies": {
-    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#editor",
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#mixins",
     "streamhub-editor": "git://github.com/Livefyre/streamhub-editor.git#auth-editor-view",
     "cajon": "git://github.com/requirejs/cajon.git#~0.1.11"
   },
