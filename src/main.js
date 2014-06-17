@@ -1,12 +1,12 @@
 var inherits = require('inherits');
 
-var View = require('streamhub-sdk/view');
+var ListView = require('streamhub-sdk/views/list-view');
+var CompositeView = require('view/composite-view');
 var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
 var ContentAncestorsView = require('thread/content-ancestors-view');
 var ContentRepliesView = require('thread/content-replies-view');
 var ContentListView = require('streamhub-sdk/content/views/content-list-view');
 var ShowMoreButton = require('thread/show-more-button');
-var template = require('hgn!thread/templates/content-thread-view');
 
 'use strict';
 
@@ -17,10 +17,8 @@ var template = require('hgn!thread/templates/content-thread-view');
  * @param [opts.themeClass] {string} A class name to be added to the view for theming purposes
  * @param [opts.maxNestLevel] {int} The maximum level of nesting for replies
  * @param [opts.nestLevel] {int} The current nest level
- * @param [opts.rootContentViewFactory] {ContentViewFactory} A factory to create
- * ContentViews for the root content
- * @param [opts.replyContentViewFactory] {ContentViewFactory} A factory to
- * create ContentViews for replies
+ * @param [opts.contentViewFactory] {ContentViewFactory} A factory to create
+ *        ContentViews for the root and reply content
  */
 var ContentThreadView = function (opts) {
     opts = opts || {};
@@ -48,10 +46,11 @@ var ContentThreadView = function (opts) {
 
     this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
     this._rootContentView = opts.rootContentView || this._contentViewFactory.createContentView(opts.content, opts);
+    this._rootContentView.$el.addClass('lf-thread-root-content');
 
     this._ancestorsView = new ContentAncestorsView({
         content: opts.content,
-        comparator: opts.comparator
+        comparator: opts.comparator,
     });
 
     this._repliesView = new ContentRepliesView({
@@ -59,58 +58,45 @@ var ContentThreadView = function (opts) {
         maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel+1,
         maxVisibleItems: this._isRoot ? this._maxVisibleItems : opts.maxVisibleReplies || Infinity,
-        order: opts.order || this.order.NEWEST,
+        order: opts.order || this.order.CREATEDAT_DESCENDING,
         showMoreButton: new ShowMoreButton({
             content: opts.content
         }),
         showQueueButton: new ShowMoreButton({
             content: opts.content
         }),
-        contentViewFactory: this._contentViewFactory
+        contentViewFactory: this._contentViewFactory,
+        queueInitial: opts.queueInitial
     });
 
     this.content.on('reply', function (reply) {
-        if (this._isRoot) {
-            this.$el.removeClass(this.CLASSES.leafNode);
-        }
+        // A content is no longer a leaf when replied to
+        this.$el.removeClass(this.CLASSES.leafNode);
     }.bind(this));
 
-    View.call(this, opts);
+    CompositeView.call(this,
+        this._ancestorsView,
+        this._rootContentView,
+        this._repliesView,
+        opts);
 };
-inherits(ContentThreadView, View);
+inherits(ContentThreadView, CompositeView);
 
-ContentThreadView.prototype.template = template;
 ContentThreadView.prototype.elTag = 'section';
 ContentThreadView.prototype.elClass = 'lf-thread';
 
-ContentThreadView.comparators = {
-    CREATEDAT_ASCENDING: function (a, b) {
-        var aDate = (a.content && a.content.createdAt) || a.createdAt,
-            bDate = (b.content && b.content.createdAt) || b.createdAt;
-        return aDate - bDate;
-    },
-    CREATEDAT_DESCENDING: function (a, b) {
-        var aDate = (a.content && a.content.createdAt) || a.createdAt,
-            bDate = (b.content && b.content.createdAt) || b.createdAt;
-        return bDate - aDate;
-    }
-}
-
 ContentThreadView.prototype.order = {
-    NEWEST: {
-        comparator: ContentRepliesView.comparators.CREATEDAT_DESCENDING,
+    CREATEDAT_DESCENDING: {
+        comparator: ListView.prototype.comparators.CREATEDAT_DESCENDING,
         showVisibleItemsAtHead: true,
     },
-    OLDEST: {
-        comparator: ContentRepliesView.comparators.CREATEDAT_ASCENDING,
+    CREATEDAT_ASCENDING: {
+        comparator: ListView.prototype.comparators.CREATEDAT_ASCENDING,
         showVisibleItemsAtHead: true
     }
-}
+};
 
 ContentThreadView.prototype.CLASSES = {
-    ancestorsView: 'lf-thread-ancestors',
-    rootContentView: 'lf-thread-root-content',
-    repliesView: 'lf-thread-replies',
     leafNode: 'lf-thread-leaf',
     rootNode: 'lf-thread-root'
 };
@@ -119,11 +105,10 @@ ContentThreadView.prototype.DATA_ATTRS = {
     nestLevel: 'data-thread-nest-level'
 };
 
-ContentThreadView.prototype.events = View.prototype.events.extended({
+ContentThreadView.prototype.events = CompositeView.prototype.events.extended({
     'writeContent.hub': function (e, content) {
         e.stopPropagation();
-        var replyView = ContentListView.prototype.getContentView.call(this._repliesView._listView, content);
-        this._repliesView._listView.add(replyView);
+        this.content.addReply(content);
     }
 });
 
@@ -149,22 +134,7 @@ function getDescendantCount(content) {
 }
 
 ContentThreadView.prototype.render = function () {
-    View.prototype.render.apply(this, arguments);
-
-    this._rootContentView.setElement(
-        this.$el.find('.'+this.CLASSES.rootContentView)
-    );
-    this._rootContentView.render();
-
-    this._ancestorsView.setElement(
-        this.$el.find('.'+this.CLASSES.ancestorsView)
-    );
-    this._ancestorsView.render();
-
-    this._repliesView.setElement(
-        this.$el.find('.'+this.CLASSES.repliesView)
-    );
-    this._repliesView.render();
+    CompositeView.prototype.render.apply(this, arguments);
 
     if (this._isLeaf) {
         this.$el.addClass(this.CLASSES.leafNode);

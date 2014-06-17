@@ -76,7 +76,7 @@ describe('ContentThreadView', function () {
         });
 
         it('has a default order of newest to oldest', function () {
-            expect(threadView._repliesView._order).toBe(threadView.order.NEWEST);
+            expect(threadView._repliesView._order).toBe(threadView.order.CREATEDAT_DESCENDING);
         });
     });
 

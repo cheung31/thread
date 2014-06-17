@@ -18,6 +18,8 @@ var ContentAncestorsView = function (opts) {
 };
 inherits(ContentAncestorsView, ContentListView);
 
+ContentAncestorsView.prototype.elClass = 'lf-thread-ancestors';
+
 ContentAncestorsView.prototype._addAncestors = function (ancestors) {
     ancestors = ancestors || [];
     for (var i=0; i < ancestors.length; i++) {
