@@ -12,7 +12,7 @@
     "requirejs": "2.1.9"
   },
   "scripts": {
-    "postinstall": "./node_modules/bower/bin/bower install",
+    "postinstall": "./node_modules/bower/bin/bower install && npm run build",
     "start": "./node_modules/http-server/bin/http-server .",
     "build": "./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js && npm run-script build-css",
     "build-css": "mkdir -p dist && cp src/css/thread.css dist/thread.min.css",
