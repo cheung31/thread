@@ -6,6 +6,7 @@ var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
 var ContentRepliesView = require('thread/content-replies-view');
 var ContentListView = require('streamhub-sdk/content/views/content-list-view');
 var ShowMoreButton = require('thread/show-more-button');
+var threadStyles = require('less!thread/css/thread.less');
 
 'use strict';
 
@@ -118,6 +119,7 @@ ContentThreadView.prototype.events = CompositeView.prototype.events.extended({
     'writeContent.hub': function (e, content) {
         e.stopPropagation();
         this.content.addReply(content);
+        this._repliesView.ignoreReply(content);
     }
 });
 

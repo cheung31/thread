@@ -59,6 +59,14 @@ require.config({
   },{
     name: 'livefyre-bootstrap',
     location: 'lib/livefyre-bootstrap/src'
+  },{
+    name: "css",
+    location: "lib/require-css",
+    main: "css"
+  },{
+    name: "less",
+    location: "lib/require-less",
+    main: "less"
   }],
   shim: {
     jquery: {
@@ -73,6 +81,21 @@ require.config({
     },
     'jasmine-jquery': {
         deps: ['jquery']
+    }
+  },
+  css: {
+    clearFileEachBuild: 'dist/thread.min.css',
+    transformEach: [{
+      requirejs: 'lib/livefyre-package-attribute/tools/prefix-css-requirejs',
+      node: 'lib/livefyre-package-attribute/tools/prefix-css-node'
+    }]
+  },
+  less: {
+    browserLoad: 'dist/thread.min',
+    paths: ['lib'],
+    relativeUrls: true,
+    modifyVars: {
+      '@icon-font-path': "\"http://cdn.livefyre.com/libs/livefyre-bootstrap/v1.1.0/fonts/\""
     }
   }
 });

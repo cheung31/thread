@@ -26,6 +26,7 @@ var ContentRepliesView = function (opts) {
     View.call(this, opts);
 
     opts.autoRender = false;
+    this._contentToIgnore;
     this._maxNestLevel = Math.max(0, opts.maxNestLevel);
     this._nestLevel = opts.nestLevel;
     this._maxVisibleItems = opts.maxVisibleItems;
@@ -75,6 +76,9 @@ ContentRepliesView.prototype._onReply = function (reply) {
         buttonStream,
         pushToButtonStream,
         replyView;
+    if (this._isReplyAdded(reply)) {
+        return;
+    }
     if (this.comparator === ListView.prototype.comparators.CREATEDAT_ASCENDING) {
         button = this._listView.showMoreButton;
         buttonStream = this._listView.more;
@@ -92,6 +96,14 @@ ContentRepliesView.prototype._onReply = function (reply) {
     }
     pushToButtonStream(replyView);
     button.setCount(buttonStream.getSize());
+};
+
+ContentRepliesView.prototype._isReplyAdded = function (reply) {
+    if (reply.id && this._contentToIgnore && this._contentToIgnore.author.id === reply.author.id) {
+        this._contentToIgnore = null;
+        return true;
+    }
+    return false;
 };
 
 /**
@@ -159,9 +171,14 @@ ContentRepliesView.prototype._createReplyView = function (content) {
         order: this._order,
         isRoot: false,
         contentViewFactory: this._contentViewFactory,
+        maxVisibleItems: this._maxVisibleItems,
         queueInitial: this._queueInitial
     });
 };
+
+ContentRepliesView.prototype.ignoreReply = function (reply) {
+    this._contentToIgnore = reply;
+}
 
 ContentRepliesView.prototype.render = function () {
     this._listView.setElement(this.$el);
