@@ -19,7 +19,8 @@
     "require-less": "git://github.com/gobengo/require-less#deponcss"
   },
   "resolutions": {
-    "view": "mixins",
-    "require-css": "transformEach2"
+    "streamhub-sdk": "mixins",
+    "require-css": "transformEach2",
+    "view": "~1.3"
   }
 }
