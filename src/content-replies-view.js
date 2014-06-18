@@ -115,7 +115,7 @@ ContentRepliesView.prototype._isReplyAdded = function (reply) {
  *      authenticated user
  */
 ContentRepliesView.prototype._isContentByAuthor = function (content) {
-    return content.author && content.author.id === (Auth.get('livefyre') && Auth.get('livefyre').get('id')) && this._listView.queue.getSize() === 0;
+    return content.author && content.author.id === (Auth.get('livefyre') && Auth.get('livefyre').get('id'));
 };
 
 /**
