@@ -94,7 +94,7 @@ ContentRepliesView.prototype._onReply = function (reply) {
         this._listView.add(replyView);
         return;
     }
-    pushToButtonStream(replyView);
+    pushToButtonStream.call(this, replyView);
     button.setCount(buttonStream.getSize());
 };
 
@@ -115,7 +115,7 @@ ContentRepliesView.prototype._isReplyAdded = function (reply) {
  *      authenticated user
  */
 ContentRepliesView.prototype._isContentByAuthor = function (content) {
-    return content.author.id === (Auth.get('livefyre') && Auth.get('livefyre').get('id')) && this._listView.queue.getSize() === 0;
+    return content.author && content.author.id === (Auth.get('livefyre') && Auth.get('livefyre').get('id')) && this._listView.queue.getSize() === 0;
 };
 
 /**
@@ -183,7 +183,6 @@ ContentRepliesView.prototype.ignoreReply = function (reply) {
 ContentRepliesView.prototype.render = function () {
     this._listView.setElement(this.$el);
     this._listView.render();
-
     this._addReplies(this.content.replies);
 };
 

@@ -2,11 +2,6 @@ var Collection = require('streamhub-sdk/collection');
 var LivefyreContent = require('streamhub-sdk/content/types/livefyre-content');
 var ContentThreadView = require('thread');
 
-/**
- * Insantiate a single ContentView
- * to test out the styling of individual items
- */
-// Sample content body from mlive.com/lions
 var now = new Date();
 
 var content = new LivefyreContent();

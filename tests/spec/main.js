@@ -1,13 +1,16 @@
 var ContentThreadView = require('thread');
-var Content = require('streamhub-sdk/content');
+var LivefyreContent = require('streamhub-sdk/content/types/livefyre-content');
 var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
 var ListView = require('streamhub-sdk/views/list-view');
 
 'use strict';
 
 describe('ContentThreadView', function () {
-    var content = new Content({ body: 'hi' });
-    content.id = 'content1';
+    var now = new Date();
+    var content = new LivefyreContent();
+    content.id = 'a';
+    content.body = 'hi';
+    content.author = { id: 'jimmy' };
 
     afterEach(function () {
         content.parentId = undefined;
@@ -92,7 +95,7 @@ describe('ContentThreadView', function () {
     });
 
     describe('A content item with parents (a reply)', function () {
-        var parentContent = new Content({ body: 'parent' });
+        var parentContent = new LivefyreContent({ body: 'parent' });
         parentContent.id = 'content2';
 
         content.parentId = parentContent.id;
@@ -108,6 +111,67 @@ describe('ContentThreadView', function () {
     //isLeaf test
 
     //maxVisibleItems test
+    describe('opts.maxVisibleItems (The number of visible items in a thread not hidden by more button', function () {
+        var reply1,
+            reply2,
+            threadView;
 
-    //order test
+        beforeEach(function () {
+            var reply1 = new LivefyreContent();
+            reply1.id = 'b';
+            reply1.body = 'Reply 1';
+            reply1.createdAt = new Date(now - (60000 * 4));
+            reply1.author = { id: 'jimmy' };
+            reply1.parentId = content.id;
+
+            var reply2 = new LivefyreContent();
+            reply2.body = 'Reply 2';
+            reply2.id = 'c';
+            reply2.createdAt = new Date(now - (60000 * 3));
+            reply2.author = { id: 'jimmy' };
+            reply2.parentId = content.id;
+
+            content.addReply(reply1);
+            content.addReply(reply2);
+            expect(content.replies.length).toBe(2);
+
+            threadView = new ContentThreadView({
+                content: content,
+                maxVisibleItems: 1
+            });
+            threadView.render();
+        });
+
+        afterEach(function () {
+            content.parentId = undefined;
+            content.replies = [];
+        });
+
+        it('should only have one visible reply view', function () {
+            waitsFor(function () {
+                return threadView.$el.find('.lf-thread-replies [data-thread-nest-level="1"]').length === 1
+            });
+
+            runs(function () {
+                expect(threadView.$el.find('.lf-thread-replies [data-thread-nest-level="1"]').length).toBe(1);
+            });
+        });
+
+        it('should have a more button displayed', function () {
+            waitsFor(function () {
+                return threadView.$el.find('.lf-thread-replies [data-thread-nest-level="1"]').length === 1
+            });
+
+            runs(function () {
+                var moreButtonEl = threadView.$el
+                    .find('.lf-thread-replies > .hub-list-more')
+                    .filter(function (idx, el) {
+                       return $(el).parent().prev().attr('data-content-id') !== 'c'
+                    });
+
+                expect(moreButtonEl.css('display')).not.toBe('none');
+                expect(moreButtonEl.html().trim()).toBe('View 1 more replies');
+            });
+        });
+    });
 });
