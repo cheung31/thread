@@ -85,10 +85,7 @@ require.config({
   },
   css: {
     clearFileEachBuild: 'dist/thread.min.css',
-    transformEach: [{
-      requirejs: 'lib/livefyre-package-attribute/tools/prefix-css-requirejs',
-      node: 'lib/livefyre-package-attribute/tools/prefix-css-node'
-    }]
+    transformEach: []
   },
   less: {
     browserLoad: 'dist/thread.min',
