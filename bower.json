@@ -19,6 +19,7 @@
     "require-less": "git://github.com/gobengo/require-less#deponcss"
   },
   "resolutions": {
+    "view": "mixins",
     "require-css": "transformEach2"
   }
 }
