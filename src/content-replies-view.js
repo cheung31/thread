@@ -26,7 +26,7 @@ var ContentRepliesView = function (opts) {
     View.call(this, opts);
 
     opts.autoRender = false;
-    this._contentToIgnore;
+    this._contentPosted;
     this._maxNestLevel = Math.max(0, opts.maxNestLevel);
     this._nestLevel = opts.nestLevel;
     this._maxVisibleItems = opts.maxVisibleItems;
@@ -99,8 +99,7 @@ ContentRepliesView.prototype._onReply = function (reply) {
 };
 
 ContentRepliesView.prototype._isReplyAdded = function (reply) {
-    if (reply.id && this._contentToIgnore && this._contentToIgnore.author.id === reply.author.id) {
-        this._contentToIgnore = null;
+    if (reply.id && this._contentPosted && this._contentPosted.author.id === reply.author.id) {
         return true;
     }
     return false;
@@ -176,9 +175,22 @@ ContentRepliesView.prototype._createReplyView = function (content) {
     });
 };
 
-ContentRepliesView.prototype.ignoreReply = function (reply) {
-    this._contentToIgnore = reply;
+ContentRepliesView.prototype.setContentPosted = function (reply, retry) {
+    this._contentPosted = reply;
 }
+
+ContentRepliesView.prototype.getReplyView = function (reply) {
+    for (var i=0; i < this._listView.views.length; i++) {
+        var replyView = this._listView.views[i];
+        if (replyView.content === reply) {
+            return replyView;
+        }
+    }
+};
+
+ContentRepliesView.prototype.getReplyPostedView = function () {
+    return this.getReplyView(this._contentPosted);
+};
 
 ContentRepliesView.prototype.render = function () {
     this._listView.setElement(this.$el);

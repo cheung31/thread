@@ -116,10 +116,15 @@ ContentThreadView.prototype.DATA_ATTRS = {
 };
 
 ContentThreadView.prototype.events = CompositeView.prototype.events.extended({
-    'writeContent.hub': function (e, content) {
+    'writeContent.hub': function (e, data) {
         e.stopPropagation();
-        this.content.addReply(content);
-        this._repliesView.ignoreReply(content);
+        this.content.addReply(data.content);
+        this._retry = data.retry;
+        this._repliesView.setContentPosted(data.content);
+    },
+    'writeFailure.hub': function (e, err) {
+        var postedReplyView = this._repliesView.getReplyPostedView();
+        postedReplyView.displayError(err, this._retry);
     }
 });
 
@@ -143,6 +148,10 @@ function getDescendantCount(content) {
         return a+b;
     });
 }
+
+ContentThreadView.prototype.displayError = function (err, retry) {
+    this._rootContentView.displayError(err, retry);
+};
 
 ContentThreadView.prototype.render = function () {
     CompositeView.prototype.render.apply(this, arguments);
