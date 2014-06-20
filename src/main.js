@@ -35,6 +35,7 @@ var ContentThreadView = function (opts) {
     this._themeClass = opts.themeClass || 'lf-thread-default';
     this.elClass += ' '+this._themeClass;
 
+    this._contentPosted;
     this._maxNestLevel = opts.maxNestLevel || 4;
     this._nestLevel = opts.nestLevel || 0;
     this._isRoot = false;
@@ -116,15 +117,14 @@ ContentThreadView.prototype.DATA_ATTRS = {
 };
 
 ContentThreadView.prototype.events = CompositeView.prototype.events.extended({
-    'writeContent.hub': function (e, data) {
+    'writeContent.hub': function (e, content) {
         e.stopPropagation();
-        this.content.addReply(data.content);
-        this._retry = data.retry;
-        this._repliesView.setContentPosted(data.content);
+        this.content.addReply(content);
+        this._setContentPosted(content);
     },
-    'writeFailure.hub': function (e, err) {
-        var postedReplyView = this._repliesView.getReplyPostedView();
-        postedReplyView.displayError(err, this._retry);
+    'writeFailure.hub': function (e, data) {
+        var postedReplyView = this._repliesView.getReplyView(this._contentPosted);
+        postedReplyView.displayError(data.error, data.retry);
     }
 });
 
@@ -151,6 +151,10 @@ function getDescendantCount(content) {
 
 ContentThreadView.prototype.displayError = function (err, retry) {
     this._rootContentView.displayError(err, retry);
+};
+
+ContentThreadView.prototype._setContentPosted = function (reply, retry) {
+    this._contentPosted = reply;
 };
 
 ContentThreadView.prototype.render = function () {

@@ -26,7 +26,6 @@ var ContentRepliesView = function (opts) {
     View.call(this, opts);
 
     opts.autoRender = false;
-    this._contentPosted;
     this._maxNestLevel = Math.max(0, opts.maxNestLevel);
     this._nestLevel = opts.nestLevel;
     this._maxVisibleItems = opts.maxVisibleItems;
@@ -175,10 +174,6 @@ ContentRepliesView.prototype._createReplyView = function (content) {
     });
 };
 
-ContentRepliesView.prototype.setContentPosted = function (reply, retry) {
-    this._contentPosted = reply;
-}
-
 ContentRepliesView.prototype.getReplyView = function (reply) {
     for (var i=0; i < this._listView.views.length; i++) {
         var replyView = this._listView.views[i];
@@ -186,10 +181,6 @@ ContentRepliesView.prototype.getReplyView = function (reply) {
             return replyView;
         }
     }
-};
-
-ContentRepliesView.prototype.getReplyPostedView = function () {
-    return this.getReplyView(this._contentPosted);
 };
 
 ContentRepliesView.prototype.render = function () {
