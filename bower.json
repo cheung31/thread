@@ -19,6 +19,7 @@
     "require-less": "git://github.com/gobengo/require-less#deponcss"
   },
   "resolutions": {
+    "livefyre-bootstrap": "~1.2.2",
     "auth": "~0.1.0",
     "streamhub-sdk": "mixins",
     "require-css": "transformEach2",
