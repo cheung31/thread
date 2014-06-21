@@ -104,6 +104,10 @@ ContentRepliesView.prototype._isReplyAdded = function (reply) {
     return false;
 };
 
+ContentRepliesView.prototype.setContentPosted = function (reply) {
+    this._contentPosted = reply;
+};
+
 /**
  * Checks whether a Content's author is the same as the user currently
  * authenticated

@@ -155,6 +155,7 @@ ContentThreadView.prototype.displayError = function (err, retry) {
 
 ContentThreadView.prototype._setContentPosted = function (reply, retry) {
     this._contentPosted = reply;
+    this._repliesView.setContentPosted(reply);
 };
 
 ContentThreadView.prototype.render = function () {
