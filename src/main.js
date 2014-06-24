@@ -53,6 +53,7 @@ var ContentThreadView = function (opts) {
 
     this._repliesView = new ContentRepliesView({
         content: opts.content,
+        contentViewFactory: this._contentViewFactory,
         order: opts.order || ContentRepliesView.ORDERS.CREATEDAT_DESCENDING,
         maxVisibleItems: this._isRoot ? this._maxVisibleItems : Infinity,
         maxNestLevel: this._maxNestLevel,
@@ -104,7 +105,15 @@ ContentThreadView.prototype.events = CompositeView.prototype.events.extended({
     },
     'writeFailure.hub': function (e, data) {
         var postedReplyView = this._repliesView.getReplyView(this._contentPosted);
-        postedReplyView.displayError(data.error, data.retry);
+        var actions = {
+            retry: data.retry,
+            edit: function () {
+                this._rootContentView.toggleReplies(true);
+                this._rootContentView.setEditorValue(this._contentPosted.body);
+                postedReplyView.destroy();
+            }.bind(this)
+        };
+        postedReplyView.displayError(data.error, actions);
     }
 });
 
@@ -129,8 +138,8 @@ function getDescendantCount(content) {
     });
 }
 
-ContentThreadView.prototype.displayError = function (err, retry) {
-    this._rootContentView.displayError(err, retry);
+ContentThreadView.prototype.displayError = function (err, actions) {
+    this._rootContentView.displayError(err, actions);
 };
 
 ContentThreadView.prototype._setContentPosted = function (reply, retry) {
