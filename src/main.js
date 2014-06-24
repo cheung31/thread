@@ -5,7 +5,6 @@ var CompositeView = require('view/composite-view');
 var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
 var ContentRepliesView = require('thread/content-replies-view');
 var ContentListView = require('streamhub-sdk/content/views/content-list-view');
-var ShowMoreButton = require('thread/show-more-button');
 var threadStyles = require('less!thread/css/thread.less');
 
 'use strict';
@@ -35,7 +34,6 @@ var ContentThreadView = function (opts) {
     this._themeClass = opts.themeClass || 'lf-thread-default';
     this.elClass += ' '+this._themeClass;
 
-    this._contentPosted;
     this._maxNestLevel = opts.maxNestLevel || 4;
     this._nestLevel = opts.nestLevel || 0;
     this._isRoot = false;
@@ -55,18 +53,15 @@ var ContentThreadView = function (opts) {
 
     this._repliesView = new ContentRepliesView({
         content: opts.content,
+        order: opts.order || ContentRepliesView.ORDERS.CREATEDAT_DESCENDING,
+        maxVisibleItems: this._isRoot ? this._maxVisibleItems : Infinity,
         maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel+1,
-        maxVisibleItems: this._isRoot ? this._maxVisibleItems : Infinity,
-        order: opts.order || this.order.CREATEDAT_DESCENDING,
-        showMoreButton: new ShowMoreButton({
-            content: opts.content
-        }),
-        showQueueButton: new ShowMoreButton({
-            content: opts.content
-        }),
-        contentViewFactory: this._contentViewFactory,
-        queueInitial: opts.queueInitial
+        queueInitial: opts.queueInitial,
+        isRoot: false,
+        createReplyView: opts.createReplyView ? opts.createReplyView.bind(this) : function (opts) {
+            return new ContentThreadView(opts);
+        }.bind(this)
     });
 
     this.content.on('reply', function (reply) {
@@ -83,21 +78,6 @@ inherits(ContentThreadView, CompositeView);
 
 ContentThreadView.prototype.elTag = 'section';
 ContentThreadView.prototype.elClass = 'lf-thread';
-
-/**
- * Sort orders of content
- * @enum {Object}
- */
-ContentThreadView.prototype.order = {
-    CREATEDAT_DESCENDING: {
-        comparator: ListView.prototype.comparators.CREATEDAT_DESCENDING,
-        showVisibleItemsAtHead: true,
-    },
-    CREATEDAT_ASCENDING: {
-        comparator: ListView.prototype.comparators.CREATEDAT_ASCENDING,
-        showVisibleItemsAtHead: true
-    }
-};
 
 /**
  * Classnames used in thread view DOM

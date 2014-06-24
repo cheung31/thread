@@ -1,6 +1,7 @@
 var ContentThreadView = require('thread');
 var LivefyreContent = require('streamhub-sdk/content/types/livefyre-content');
 var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
+var ContentRepliesView = require('thread/content-replies-view');
 var ListView = require('streamhub-sdk/views/list-view');
 
 'use strict';
@@ -71,7 +72,7 @@ describe('ContentThreadView', function () {
         });
 
         it('nest level is one greater than root', function () {
-            expect(threadView._repliesView._nestLevel).toBe(threadView._nestLevel+1)
+            expect(threadView._repliesView._nestLevel).toBe(threadView._nestLevel+1);
         });
 
         it('max nest level is same as root', function () {
@@ -79,7 +80,7 @@ describe('ContentThreadView', function () {
         });
 
         it('has a default order of newest to oldest', function () {
-            expect(threadView._repliesView._order).toBe(threadView.order.CREATEDAT_DESCENDING);
+            expect(threadView._repliesView._order).toBe(ContentRepliesView.ORDERS.CREATEDAT_DESCENDING);
         });
     });
 
@@ -149,7 +150,7 @@ describe('ContentThreadView', function () {
 
         it('should only have one visible reply view', function () {
             waitsFor(function () {
-                return threadView.$el.find('.lf-thread-replies [data-thread-nest-level="1"]').length === 1
+                return threadView.$el.find('.lf-thread-replies [data-thread-nest-level="1"]').length === 1;
             });
 
             runs(function () {
@@ -159,14 +160,14 @@ describe('ContentThreadView', function () {
 
         it('should have a more button displayed', function () {
             waitsFor(function () {
-                return threadView.$el.find('.lf-thread-replies [data-thread-nest-level="1"]').length === 1
+                return threadView.$el.find('.lf-thread-replies [data-thread-nest-level="1"]').length === 1;
             });
 
             runs(function () {
                 var moreButtonEl = threadView.$el
                     .find('.lf-thread-replies > .hub-list-more')
                     .filter(function (idx, el) {
-                       return $(el).parent().prev().attr('data-content-id') !== 'c'
+                       return $(el).parent().prev().attr('data-content-id') !== 'c';
                     });
 
                 expect(moreButtonEl.css('display')).not.toBe('none');

@@ -1,5 +1,7 @@
 var inherits = require('inherits');
 var ListView = require('streamhub-sdk/views/list-view');
+var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
+var ShowMoreButton = require('thread/show-more-button');
 var View = require('view');
 var Auth = require('auth');
 
@@ -9,8 +11,6 @@ var Auth = require('auth');
  * A view that displays a content item's replies
  * @param [opts] {Object}
  * @param [opts.content] {Content} The content item to be displayed
- * @param [opts.maxNestLevel] {int} The maximum level of nesting for replies
- * @param [opts.nestLevel] {int} The current nest level
  * @param [opts.contentViewFactory] {ContentViewFactory} A factory to create
  *        ContentViews for the root and reply content
  * @param [opts.queueInitial] {number} The number of items to display before
@@ -26,34 +26,52 @@ var ContentRepliesView = function (opts) {
     View.call(this, opts);
 
     opts.autoRender = false;
-    this._maxNestLevel = Math.max(0, opts.maxNestLevel);
-    this._nestLevel = opts.nestLevel;
-    this._maxVisibleItems = opts.maxVisibleItems;
-    this._showVisibleItemsAtHead = !!opts.order.showVisibleItemsAtHead;
-    this._showQueueHeader = this._showVisibleItemsAtHead;
+    this.createReplyView = opts.createReplyView;
 
     this.content = opts.content;
-    this._contentViewFactory = opts.contentViewFactory;
-    this._order = opts.order;
-    this.comparator = opts.order.comparator;
+    this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
+    this._maxNestLevel = opts.maxNestLevel;
+    this._nestLevel = opts.nestLevel;
 
+    this._maxVisibleItems = opts.maxVisibleItems;
+    this._order = opts.order || ContentRepliesView.ORDERS.CREATEDAT_DESCENDING;
+    this.comparator = this._order.comparator;
+    this._showQueueHeader = !!this._order.showVisibleItemsAtHead;
     this._queueInitial = opts.queueInitial;
     this._listView = new ListView({
         comparator: this.comparator,
         autoRender: true,
-        showMoreButton: opts.showMoreButton,
-        showQueueButton: opts.showQueueButton,
+        showMoreButton: opts.showMoreButton || new ShowMoreButton({
+            content: opts.content
+        }),
+        showQueueButton: opts.showQueueButton || new ShowMoreButton({
+            content: opts.content
+        }),
         initial: this._maxVisibleItems,
         queueInitial: this._queueInitial
     });
 
-    this.content.on('reply', function (reply) {
-        this._onReply(reply);
-    }.bind(this));
+    this.content.on('reply', function(reply) { this._onReply(reply); }.bind(this));
 };
 inherits(ContentRepliesView, View);
 
 ContentRepliesView.prototype.elClass = 'lf-thread-replies';
+
+
+/**
+ * Sort orders of content
+ * @enum {Object}
+ */
+ContentRepliesView.ORDERS = {
+    CREATEDAT_DESCENDING: {
+        comparator: ListView.prototype.comparators.CREATEDAT_DESCENDING,
+        showVisibleItemsAtHead: true
+    },
+    CREATEDAT_ASCENDING: {
+        comparator: ListView.prototype.comparators.CREATEDAT_ASCENDING,
+        showVisibleItemsAtHead: true
+    }
+};
 
 ContentRepliesView.prototype.events = View.prototype.events.extended({
     'showMore.hub': function (e) {
@@ -76,6 +94,9 @@ ContentRepliesView.prototype._onReply = function (reply) {
         pushToButtonStream,
         replyView;
     if (this._isReplyAdded(reply)) {
+        // Set the optimistically posted content id to 
+        // the content id that streamed in
+        this._contentPosted.id = reply.id;
         return;
     }
     if (this.comparator === ListView.prototype.comparators.CREATEDAT_ASCENDING) {
@@ -158,24 +179,18 @@ ContentRepliesView.prototype._addReplies = function (replies) {
     this._listView.showMoreButton.setCount(this.content.replies.length - this._maxVisibleItems);
 };
 
-/**
- * Create a reply view from a Content instance representing a reply
- * @param content {Content} A Content instance representing a reply
- * @return {ContentThreadView}
- */
-ContentRepliesView.prototype._createReplyView = function (content) {
-    var ContentThreadView = require('thread');
-
-    return new ContentThreadView({
-        content: content,
+ContentRepliesView.prototype._createReplyView = function (reply) {
+    var opts = {
+        content: reply,
+        contentViewFactory: this._contentViewFactory,
         maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel,
         order: this._order,
         isRoot: false,
-        contentViewFactory: this._contentViewFactory,
         maxVisibleItems: this._maxVisibleItems,
         queueInitial: this._queueInitial
-    });
+    };
+    return this.createReplyView(opts);
 };
 
 ContentRepliesView.prototype.getReplyView = function (reply) {
