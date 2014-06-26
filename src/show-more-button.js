@@ -3,15 +3,16 @@
 var inherits = require('inherits');
 var BaseShowMoreButton = require('streamhub-sdk/views/show-more-button');
 var template = require('hgn!thread/templates/show-more-button');
+var showMoreButtonStyles = require('less!thread/css/show-more-button.less');
 
 var ShowMoreButton = function (opts) {
     BaseShowMoreButton.call(this, opts);
-
     this._count = 0;
 };
 inherits(ShowMoreButton, BaseShowMoreButton);
 
 ShowMoreButton.prototype.template = template;
+ShowMoreButton.prototype.newNotificationClass = 'hub-more-button-holding';
 
 ShowMoreButton.prototype.getTemplateContext = function () {
     return {
@@ -24,6 +25,9 @@ ShowMoreButton.prototype.getCount = function () {
 };
 
 ShowMoreButton.prototype.setCount = function (count) {
+    if (count > this._count) {
+        this.$el.addClass(this.newNotificationClass);
+    }
     this._count = count;
     this.$el.html(this.template(this.getTemplateContext()));
 };

@@ -11,6 +11,8 @@
   ],
   stubModules: ['text', 'hgn'],
   out: "../dist/thread.min.js",
+  buildCSS: true,
+  separateCSS: true,
   pragmasOnSave: {
     excludeHogan: true
   },

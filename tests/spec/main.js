@@ -171,7 +171,7 @@ describe('ContentThreadView', function () {
                     });
 
                 expect(moreButtonEl.css('display')).not.toBe('none');
-                expect(moreButtonEl.html().trim()).toBe('View 1 more replies');
+                expect(moreButtonEl.text().trim()).toBe('View 1 more replies');
             });
         });
     });
