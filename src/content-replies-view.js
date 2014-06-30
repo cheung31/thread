@@ -4,6 +4,8 @@ var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
 var ShowMoreButton = require('thread/show-more-button');
 var View = require('view');
 var Auth = require('auth');
+var hasMore = require('streamhub-sdk/views/mixins/more-mixin');
+var hasQueue = require('streamhub-sdk/views/mixins/queue-mixin');
 
 'use strict';
 
@@ -38,9 +40,10 @@ var ContentRepliesView = function (opts) {
     this.comparator = this._order.comparator;
     this._showQueueHeader = !!this._order.showVisibleItemsAtHead;
     this._queueInitial = opts.queueInitial;
-    this._listView = new ListView({
+
+    var listOpts = {
         comparator: this.comparator,
-        autoRender: true,
+        autoRender: false,
         showMoreButton: opts.showMoreButton || new ShowMoreButton({
             content: opts.content
         }),
@@ -49,7 +52,11 @@ var ContentRepliesView = function (opts) {
         }),
         initial: this._maxVisibleItems,
         queueInitial: this._queueInitial
-    });
+    };
+    this._listView = new ListView(listOpts);
+    hasMore(this._listView, listOpts);
+    hasQueue(this._listView, listOpts);
+    this._listView.render();
 
     this.content.on('reply', function(reply) { this._onReply(reply); }.bind(this));
 };
