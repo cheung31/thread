@@ -4,7 +4,6 @@ var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
 var ShowMoreButton = require('thread/show-more-button');
 var View = require('view');
 var Auth = require('auth');
-var hasMore = require('streamhub-sdk/views/mixins/more-mixin');
 var hasQueue = require('streamhub-sdk/views/mixins/queue-mixin');
 
 'use strict';
@@ -54,7 +53,6 @@ var ContentRepliesView = function (opts) {
         queueInitial: this._queueInitial
     };
     this._listView = new ListView(listOpts);
-    hasMore(this._listView, listOpts);
     hasQueue(this._listView, listOpts);
     this._listView.render();
 
