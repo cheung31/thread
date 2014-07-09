@@ -1,6 +1,9 @@
 thread
 ======
 
+[![Build Status](https://travis-ci.org/cheung31/thread.png)](https://travis-ci.org/cheung31/thread)
+
+
 A module to be used in conjunction with Streamhub SDK to display replies of a Content.
 
 ## Usage
@@ -33,18 +36,18 @@ var threadView = new ContentThreadView({
 });
 ```
 
-#### ```comparator```
-Specify a comparator function to control the sort order of replies (Defaults to ascending ```created_at```). ```ContentRepliesView``` has some pre-defined comparators:
+#### ```order```
+Specify a sort order of replies (Defaults to descending ```created_at```). ```ContentThreadView``` has some pre-defined comparators:
 
-* ```ContentRepliesView.comparators.CREATEDAT_ASCENDING``` - Ascending ```created_at```
-* ```ContentRepliesView.comparators.CREATEDAT_DESCENDING``` - Descending ```created_at```
+* ```ContentThreadView.ORDERS.CREATEDAT_ASCENDING``` - Ascending ```created_at```
+* ```ContentThreadView.ORDERS.CREATEDAT_DESCENDING``` - Descending ```created_at```
 
 ```
-var ContentRepliesView = require('thread/content-replies-view');
+var ContentThreadView = require('thread');
 
 var threadView = new ContentThreadView({
   content: myContent,
-  comparator: ContentRepliesView.comparators.CREATEDAT_DESCENDING
+  order: ContentThreadView.ORDERS.CREATEDAT_ASCENDING
 });
 ```
 

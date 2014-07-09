@@ -1,97 +1,135 @@
-'use strict';
-
 var inherits = require('inherits');
 
-var View = require('streamhub-sdk/view');
+var ListView = require('streamhub-sdk/views/list-view');
+var CompositeView = require('view/composite-view');
 var ContentViewFactory = require('streamhub-sdk/content/content-view-factory');
-var ContentAncestorsView = require('thread/content-ancestors-view');
 var ContentRepliesView = require('thread/content-replies-view');
-var ShowMoreButton = require('thread/show-more-button');
-var template = require('hgn!thread/templates/content-thread-view');
+var threadStyles = require('less!thread/css/thread.less');
 
+'use strict';
+
+/**
+ * A view that displays a content item and its replies
+ * @param [opts] {Object}
+ * @param [opts.content] {Content} The content item to be displayed
+ * @param [opts.themeClass] {string} A class name to be added to the view for theming purposes
+ * @param [opts.maxNestLevel] {number} The maximum level of nesting for replies
+ * @param [opts.nestLevel] {number} The current nest level
+ * @param [opts.maxVisibleItems] {number}
+ * @param [opts.order] {Object}
+ * @param [opts.rootContentView] {ContentView} The content view to use as the
+ *        root of the thread
+ * @param [opts.contentViewFactory] {ContentViewFactory} A factory to create
+ *        ContentViews for the root and reply content
+ */
 var ContentThreadView = function (opts) {
     opts = opts || {};
 
     if (! opts.content) {
         throw 'No content specified for ContentThreadView';
     }
+    this.content = opts.content;
 
-    this._isRoot = opts.isRoot === false ? false : true;
+    this._themeClass = opts.themeClass || 'lf-thread-default';
+    this.elClass += ' '+this._themeClass;
+
     this._maxNestLevel = opts.maxNestLevel || 4;
     this._nestLevel = opts.nestLevel || 0;
-    if (this._maxNestLevel < 1) {
+    this._isRoot = false;
+    this._isLeaf = false;
+
+    if (!this.content.parentId) {
+        this._isRoot = true;
+    }
+    if (this._maxNestLevel === this._nestLevel || (this._isRoot && this.content.replies.length === 0)) {
         this._isLeaf = true;
     }
+    this._maxVisibleItems = opts.maxVisibleItems || 2;
 
-    this.content = opts.content;
     this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
-    this._rootContentView = this._contentViewFactory.createContentView(opts.content);
-
-    this._ancestorsView = new ContentAncestorsView({
-        content: opts.content,
-        comparator: opts.comparator
-    });
+    this._rootContentView = opts.rootContentView || this._contentViewFactory.createContentView(opts.content, opts);
+    this._rootContentView.$el.addClass('lf-thread-root-content');
 
     this._repliesView = new ContentRepliesView({
         content: opts.content,
-        maxNestLevel: this._maxNestLevel-1,
+        contentViewFactory: this._contentViewFactory,
+        order: opts.order || ContentRepliesView.ORDERS.CREATEDAT_DESCENDING,
+        maxVisibleItems: this._isRoot ? this._maxVisibleItems : Infinity,
+        maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel+1,
-        order: opts.order || this.order.NEWEST_HEAD,
-        showMoreButton: new ShowMoreButton({
-            content: opts.content
-        })
+        queueInitial: opts.queueInitial,
+        isRoot: false,
+        createReplyView: opts.createReplyView ? opts.createReplyView.bind(this) : function (opts) {
+            return new ContentThreadView(opts);
+        }.bind(this)
     });
 
-    View.call(this, opts);
-};
-inherits(ContentThreadView, View);
+    this.content.on('reply', function (reply) {
+        // A content is no longer a leaf when replied to
+        this.$el.removeClass(this.CLASSES.leafNode);
+    }.bind(this));
 
-ContentThreadView.prototype.template = template;
+    CompositeView.call(this,
+        this._rootContentView,
+        this._repliesView,
+        opts);
+};
+inherits(ContentThreadView, CompositeView);
+
 ContentThreadView.prototype.elTag = 'section';
 ContentThreadView.prototype.elClass = 'lf-thread';
 
-ContentThreadView.comparators = {
-    CREATEDAT_ASCENDING: function (a, b) {
-        var aDate = a.content.createdAt || a.createdAt,
-            bDate = b.content.createdAt || b.createdAt;
-        return aDate - bDate;
-    },
-    CREATEDAT_DESCENDING: function (a, b) {
-        var aDate = a.content.createdAt || a.createdAt,
-            bDate = b.content.createdAt || b.createdAt;
-        return bDate - aDate;
-    }
-}
-
-ContentThreadView.prototype.order = {
-    NEWEST_HEAD: {
-        comparator: ContentThreadView.comparators.CREATEDAT_DESCENDING,
-        showVisibleItemsAtHead: true,
-    },
-    NEWEST_TAIL: {
-        comparator: ContentThreadView.comparators.CREATEDAT_DESCENDING,
-        showVisibleItemsAtHead: false
-    },
-    OLDEST_HEAD: {
-        comparator: ContentThreadView.comparators.CREATEDAT_ASCENDING,
+/**
+ * Sort orders of content
+ * @enum {Object}
+ */
+ContentThreadView.ORDERS = {
+    CREATEDAT_DESCENDING: {
+        comparator: ListView.prototype.comparators.CREATEDAT_DESCENDING,
         showVisibleItemsAtHead: true
     },
-    OLDEST_TAIL: {
-        comparator: ContentThreadView.comparators.CREATEDAT_ASCENDING,
-        showVisibleItemsAtHead: false
+    CREATEDAT_ASCENDING: {
+        comparator: ListView.prototype.comparators.CREATEDAT_ASCENDING,
+        showVisibleItemsAtHead: true
     }
-}
-
-ContentThreadView.prototype.CLASSES = {
-    ancestorsView: 'lf-thread-ancestors',
-    rootContentView: 'lf-thread-root-content',
-    repliesView: 'lf-thread-replies',
-    leafNode: 'lf-thread-leaf'
 };
 
+/**
+ * Classnames used in thread view DOM
+ * @enum {string}
+ */
+ContentThreadView.prototype.CLASSES = {
+    leafNode: 'lf-thread-leaf',
+    rootNode: 'lf-thread-root'
+};
+
+/**
+ * Data attributes used in thread view DOM
+ * @enum {string}
+ */
 ContentThreadView.prototype.DATA_ATTRS = {
     nestLevel: 'data-thread-nest-level'
 };
+
+ContentThreadView.prototype.events = CompositeView.prototype.events.extended({
+    'writeContent.hub': function (e, content) {
+        e.stopPropagation();
+        this.content.addReply(content);
+        this._setContentPosted(content);
+    },
+    'writeFailure.hub': function (e, data) {
+        var postedReplyView = this._repliesView.getReplyView(this._contentPosted);
+        var actions = {
+            retry: data.retry,
+            edit: function () {
+                this._rootContentView.toggleReplies(true);
+                this._rootContentView.setEditorValue(this._contentPosted.body);
+                postedReplyView.destroy();
+            }.bind(this)
+        };
+        postedReplyView.displayError(data.error, actions);
+    }
+});
 
 /**
  * Return a number indicating the number of descendants there are to the
@@ -114,25 +152,24 @@ function getDescendantCount(content) {
     });
 }
 
+ContentThreadView.prototype.displayError = function (err, actions) {
+    this._rootContentView.displayError(err, actions);
+};
+
+ContentThreadView.prototype._setContentPosted = function (reply, retry) {
+    this._contentPosted = reply;
+    this._repliesView.setContentPosted(reply);
+};
+
 ContentThreadView.prototype.render = function () {
-    View.prototype.render.apply(this, arguments);
-
-    this._rootContentView.setElement(
-        this.$el.find('.'+this.CLASSES.rootContentView)
-    );
-    this._ancestorsView.setElement(
-        this.$el.find('.'+this.CLASSES.ancestorsView)
-    );
-    this._repliesView.setElement(
-        this.$el.find('.'+this.CLASSES.repliesView)
-    );
-
-    this._rootContentView.render();
-    this._repliesView.render();
-    this._ancestorsView.render();
+    CompositeView.prototype.render.apply(this, arguments);
 
     if (this._isLeaf) {
-        this._repliesView.$el.addClass(this.CLASSES.leafNode);
+        this.$el.addClass(this.CLASSES.leafNode);
+    }
+
+    if (this._isRoot) {
+        this.$el.addClass(this.CLASSES.rootNode);
     }
 
     this.$el.attr(this.DATA_ATTRS.nestLevel, this._nestLevel);

@@ -11,12 +11,9 @@ require.config({
     'jasmine-html': 'lib/jasmine/lib/jasmine-core/jasmine-html',
     'jasmine-jquery': 'lib/jasmine-jquery/lib/jasmine-jquery',
     inherits: 'lib/inherits/inherits',
+    observer: 'lib/observer/src/observer',
     'event-emitter': 'lib/event-emitter/src/event-emitter',
-  },
-  map: {
-    '*': {
-      'debug': 'streamhub-sdk/debug'
-    }
+    'debug': 'lib/debug/debug'
   },
   packages: [{
     name: "thread",
@@ -40,6 +37,13 @@ require.config({
     name: "streamhub-sdk/modal",
     location: "lib/streamhub-sdk/src/modal"
   },{
+    name: "streamhub-editor",
+    location: "lib/streamhub-editor/src/javascript",
+    main: "editor"
+  },{
+    name: 'streamhub-editor/templates',
+    location: 'lib/streamhub-editor/src/templates'
+  },{
     name: "stream",
     location: "lib/stream/src"
   },{
@@ -53,11 +57,16 @@ require.config({
     name: "livefyre-auth",
     location: "lib/livefyre-auth/src"
   },{
-    name: 'streamhub-editor',
-    location: 'lib/streamhub-editor/src/javascript'
-  },{
     name: 'livefyre-bootstrap',
     location: 'lib/livefyre-bootstrap/src'
+  },{
+    name: "css",
+    location: "lib/require-css",
+    main: "css"
+  },{
+    name: "less",
+    location: "lib/require-less",
+    main: "less"
   }],
   shim: {
     jquery: {
@@ -72,6 +81,18 @@ require.config({
     },
     'jasmine-jquery': {
         deps: ['jquery']
+    }
+  },
+  css: {
+    clearFileEachBuild: 'dist/thread.min.css',
+    transformEach: []
+  },
+  less: {
+    browserLoad: 'dist/thread.min',
+    paths: ['lib'],
+    relativeUrls: true,
+    modifyVars: {
+      '@icon-font-path': "\"http://cdn.livefyre.com/libs/livefyre-bootstrap/v1.1.0/fonts/\""
     }
   }
 });

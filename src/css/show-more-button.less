@@ -1,0 +1,21 @@
+@import (reference) "livefyre-bootstrap/src/styles/fycon-chars.less";
+
+.lf-thread-replies {
+    .hub-list-more,
+    .hub-list-queue {
+        width: initial;
+        position: relative;
+        z-index: 1;
+        margin-left: 10px;
+        margin-top: 20px;
+    }
+
+    .hub-list-queue.hub-more-button-holding {
+        .hub-more-notification:before {
+            content: '●';
+            font-size: 14px;
+            margin-left: 3px;
+            line-height: 10px;
+        }
+    }
+}
