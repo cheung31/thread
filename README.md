@@ -36,18 +36,18 @@ var threadView = new ContentThreadView({
 });
 ```
 
-#### ```comparator```
-Specify a comparator function to control the sort order of replies (Defaults to ascending ```created_at```). ```ListView``` has some pre-defined comparators:
+#### ```order```
+Specify a sort order of replies (Defaults to descending ```created_at```). ```ContentThreadView``` has some pre-defined comparators:
 
-* ```ListView.prototype.comparators.CREATEDAT_ASCENDING``` - Ascending ```created_at```
-* ```ListView.prototype.comparators.CREATEDAT_DESCENDING``` - Descending ```created_at```
+* ```ContentThreadView.ORDERS.CREATEDAT_ASCENDING``` - Ascending ```created_at```
+* ```ContentThreadView.ORDERS.CREATEDAT_DESCENDING``` - Descending ```created_at```
 
 ```
-var ContentRepliesView = require('thread/content-replies-view');
+var ContentThreadView = require('thread');
 
 var threadView = new ContentThreadView({
   content: myContent,
-  comparator: ListView.prototype.comparators.CREATEDAT_DESCENDING
+  order: ContentThreadView.ORDERS.CREATEDAT_ASCENDING
 });
 ```
 

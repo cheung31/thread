@@ -80,6 +80,21 @@ ContentThreadView.prototype.elTag = 'section';
 ContentThreadView.prototype.elClass = 'lf-thread';
 
 /**
+ * Sort orders of content
+ * @enum {Object}
+ */
+ContentThreadView.ORDERS = {
+    CREATEDAT_DESCENDING: {
+        comparator: ListView.prototype.comparators.CREATEDAT_DESCENDING,
+        showVisibleItemsAtHead: true
+    },
+    CREATEDAT_ASCENDING: {
+        comparator: ListView.prototype.comparators.CREATEDAT_ASCENDING,
+        showVisibleItemsAtHead: true
+    }
+};
+
+/**
  * Classnames used in thread view DOM
  * @enum {string}
  */
