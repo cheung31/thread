@@ -80,6 +80,17 @@
             padding-left: 34px;
         }
 
+        .content-with-image {
+            .content-attachments-tiled {
+                width: 60%;
+                margin: 10px 0 10px 34px;
+
+                .content-attachment {
+                    padding-bottom: 50%;
+                }
+            }
+        }
+
         .lf-thread {
             .content .content-header .content-header-inner {
                 padding-left: 0;
@@ -134,17 +145,6 @@
         [data-thread-nest-level='1']:first-child {
             padding-top: 20px;
         }
-
-        [data-thread-nest-level='1'] .content-with-image {
-            .content-attachments-tiled {
-                width: 60%;
-                margin: 10px 0 10px 53px;
-
-                .content-attachment {
-                    padding-bottom: 50%;
-                }
-            }
-        }
     }
 
     // First-level Reply
@@ -167,6 +167,12 @@
 
         .content-editor {
             padding-left: 47px;
+        }
+
+        &.content-with-image {
+            .content-attachments-tiled {
+                margin-left: 53px;
+            }
         }
     }
     .lf-thread-replies [data-thread-nest-level='1']:first-child > .lf-thread-root-content {
