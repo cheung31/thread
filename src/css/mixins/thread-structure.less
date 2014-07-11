@@ -112,7 +112,7 @@
         border-left: none;
         border-right: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-        margin: 0 0 20px 0;
+        margin: 0;
         padding: 0;
 
         .hub-more-notification {
@@ -130,6 +130,10 @@
         padding-left: 0;
         padding-bottom: 20px;
         margin-bottom: 20px;
+
+        [data-thread-nest-level='1']:first-child {
+            padding-top: 20px;
+        }
     }
 
     // First-level Reply
@@ -155,7 +159,7 @@
         }
     }
     .lf-thread-replies [data-thread-nest-level='1']:first-child > .lf-thread-root-content {
-        margin-top: 20px;
+        margin-top: 0px;
         padding-left: 0;
     }
 
