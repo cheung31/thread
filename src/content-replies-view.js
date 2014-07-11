@@ -188,7 +188,7 @@ ContentRepliesView.prototype._addReplies = function (replies) {
 ContentRepliesView.prototype._createReplyView = function (reply) {
     var opts = {
         content: reply,
-        contentViewFactory: this._contentViewFactory,
+        replyContentViewFactory: this._contentViewFactory,
         maxNestLevel: this._maxNestLevel,
         nestLevel: this._nestLevel,
         order: this._order,

@@ -20,7 +20,9 @@ var threadStyles = require('less!thread/css/thread.less');
  * @param [opts.rootContentView] {ContentView} The content view to use as the
  *        root of the thread
  * @param [opts.contentViewFactory] {ContentViewFactory} A factory to create
- *        ContentViews for the root and reply content
+ *        ContentViews for the root content
+ * @param [opts.replyContentViewFactory] {ContentViewFactory} A factory to create
+ *        ContentViews for the replies content
  */
 var ContentThreadView = function (opts) {
     opts = opts || {};
@@ -52,7 +54,7 @@ var ContentThreadView = function (opts) {
 
     this._repliesView = new ContentRepliesView({
         content: opts.content,
-        contentViewFactory: this._contentViewFactory,
+        contentViewFactory: opts.replyContentViewFactory,
         order: opts.order || ContentRepliesView.ORDERS.CREATEDAT_DESCENDING,
         maxVisibleItems: this._isRoot ? this._maxVisibleItems : Infinity,
         maxNestLevel: this._maxNestLevel,
@@ -60,6 +62,7 @@ var ContentThreadView = function (opts) {
         queueInitial: opts.queueInitial,
         isRoot: false,
         createReplyView: opts.createReplyView ? opts.createReplyView.bind(this) : function (opts) {
+            opts.contentViewFactory = this._contentViewFactory;
             return new ContentThreadView(opts);
         }.bind(this)
     });
