@@ -118,6 +118,7 @@ ContentThreadView.prototype.events = CompositeView.prototype.events.extended({
         this._setContentPosted(content);
     },
     'writeFailure.hub': function (e, data) {
+        e.stopPropagation();
         var postedReplyView = this._repliesView.getReplyView(this._contentPosted);
         var actions = {
             retry: data.retry,
