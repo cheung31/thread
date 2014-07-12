@@ -3,6 +3,9 @@
 .lf-thread-replies {
     .hub-list-more,
     .hub-list-queue {
+        display: inline; // ie9 hack for inline-block
+        zoom: 1;
+        line-height: 50px;
         width: initial;
         position: relative;
         z-index: 1;
