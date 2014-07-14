@@ -5,7 +5,7 @@
     "./src/main.js"
   ],
   "dependencies": {
-    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#attachments-refactor-rebase",
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#rc",
     "streamhub-editor": "git://github.com/Livefyre/streamhub-editor.git#master",
     "cajon": "git://github.com/requirejs/cajon.git#~0.1.11"
   },
@@ -19,9 +19,10 @@
     "require-less": "git://github.com/gobengo/require-less#deponcss"
   },
   "resolutions": {
-    "auth": "~0.1.0",
+    "auth": "~0.0.4",
     "require-css": "transformEach2",
     "view": "~1.3",
-    "base64": "~0.4.0"
+    "base64": "~0.4.0",
+    "streamhub-sdk": "rc"
   }
 }
