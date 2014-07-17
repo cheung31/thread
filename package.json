@@ -6,7 +6,7 @@
     "name": "Ryan Cheung",
     "email": "ryanc@livefyre.com"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "bower": "*",
     "tmp": "0.0.23",
