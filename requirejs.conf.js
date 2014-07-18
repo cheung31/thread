@@ -60,6 +60,13 @@ require.config({
     name: 'livefyre-bootstrap',
     location: 'lib/livefyre-bootstrap/src'
   },{
+    name: 'streamhub-share',
+    location: 'lib/streamhub-share/src',
+    main: 'share-button.js'
+  },{
+    name: 'streamhub-ui',
+    location: 'lib/streamhub-ui/src'
+  },{
     name: "css",
     location: "lib/require-css",
     main: "css"
