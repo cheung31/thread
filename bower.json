@@ -6,7 +6,7 @@
   ],
   "dependencies": {
     "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#rc",
-    "streamhub-editor": "git://github.com/Livefyre/streamhub-editor.git#master",
+    "streamhub-editor": "git://github.com/Livefyre/streamhub-editor.git#~1.2.1",
     "cajon": "git://github.com/requirejs/cajon.git#~0.1.11"
   },
   "devDependencies": {
