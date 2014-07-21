@@ -81,8 +81,7 @@ Specify a content view factory to render the threaded replies in a customized vi
 
 ```
 var ContentThreadView = require('thread');
-
-var LivefyreContentView = require('streamhub-sdk/content/views/livefyre-content-view');
+var MyCustomContentViewFactory = require('custom-content-view-factory');
 
 var threadView = new ContentThreadView({
     content: myContent,
@@ -95,7 +94,6 @@ Specify the ```ContentView``` to be used as the root-level content (The root-lev
 
 ```
 var ContentThreadView = require('thread');
-
 var LivefyreContentView = require('streamhub-sdk/content/views/livefyre-content-view');
 
 var threadView = new ContentThreadView({
