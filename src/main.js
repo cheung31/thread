@@ -41,7 +41,7 @@ var ContentThreadView = function (opts) {
     if (!this.content.parentId) {
         this._isRoot = true;
     }
-    if (this._maxNestLevel === this._nestLevel || (this._isRoot && this.content.replies.length === 0)) {
+    if (this._maxNestLevel === this._nestLevel || (this._isRoot && this.content.replies.filter(isPublicContent).length === 0)) {
         this._isLeaf = true;
     }
     this._maxVisibleItems = opts.maxVisibleItems || 2;
@@ -56,6 +56,7 @@ var ContentThreadView = function (opts) {
         order: opts.order || ContentRepliesView.ORDERS.CREATEDAT_DESCENDING,
         maxVisibleItems: this._isRoot ? this._maxVisibleItems : Infinity,
         maxNestLevel: this._maxNestLevel,
+        contentIsVisible: isPublicContent,
         nestLevel: this._nestLevel+1,
         queueInitial: opts.queueInitial,
         isRoot: false,
@@ -66,8 +67,10 @@ var ContentThreadView = function (opts) {
     });
 
     this.content.on('reply', function (reply) {
-        // A content is no longer a leaf when replied to
-        this.$el.removeClass(this.CLASSES.leafNode);
+        if (isPublicContent(reply)) {
+            // A content is no longer a leaf when publicly replied to
+            this.$el.removeClass(this.CLASSES.leafNode);
+        }
     }.bind(this));
 
     CompositeView.call(this,
@@ -190,5 +193,16 @@ ContentThreadView.prototype.remove = function () {
     this.$el.trigger('removeContentView.hub', { contentView: this });
     this.$el.detach();
 };
+
+/**
+ * Return whether a content model is publicly visible to all end-users
+ * A thread with replies is a leaf if all its replies are not public
+ */
+function isPublicContent(content) {
+    if (! content.visibility) {
+        return true;
+    }
+    return content.visibility === 'EVERYONE';
+}
 
 module.exports = ContentThreadView;
