@@ -15,6 +15,9 @@ var hasQueue = require('streamhub-sdk/views/mixins/queue-mixin');
  * @param [opts.content] {Content} The content item to be displayed
  * @param [opts.contentViewFactory] {ContentViewFactory} A factory to create
  *        ContentViews for the root and reply content
+ * @param [opts.contentIsVisible] {function} Function to invoke to check if
+ *        a given reply model is visible and should factor into counts on buttons,
+ *        replyView creation, etc. Defaults to (x) => true
  * @param [opts.queueInitial] {number} The number of items to display before
  *        being held by queue.
  */
@@ -34,6 +37,7 @@ var ContentRepliesView = function (opts) {
     this._contentViewFactory = opts.contentViewFactory || new ContentViewFactory();
     this._maxNestLevel = opts.maxNestLevel;
     this._nestLevel = opts.nestLevel;
+    this._contentIsVisible = opts.contentIsVisible || function () { return true; };
 
     this._maxVisibleItems = opts.maxVisibleItems;
     this._order = opts.order || ContentRepliesView.ORDERS.CREATEDAT_DESCENDING;
@@ -168,8 +172,13 @@ ContentRepliesView.prototype.pushQueue = function (replyView) {
  * @param replies {Array.<Content>} The set of replies to add to the view
  */
 ContentRepliesView.prototype._addReplies = function (replies) {
-    replies = replies || [];
-    replies.sort(this.comparator);
+    var self = this;
+    replies = (replies || [])
+        // Only add replies that should be visible
+        .filter(function (content) {
+            return self._contentIsVisible(content);
+        })
+        .sort(this.comparator);
 
     if (!this._showQueueHeader) {
         for (var i=replies.length-1; i > -1; i--) {
